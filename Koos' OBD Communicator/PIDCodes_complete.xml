@@ -1,0 +1,2010 @@
+﻿<PIDCodes>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>00</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [01 - 20]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $01..PID $20] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>01</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</Description>
+	  <Formula>Bit encoded. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>02</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Freeze DTC</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>03</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Fuel system status</Description>
+	  <Formula>Bit encoded. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>04</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Calculated engine load value</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>05</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Engine coolant temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>215</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>A-40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>06</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Short term fuel % trim—Bank 1</Description>
+	  <MinValue>-100 Subtracting Fuel (Rich Condition)</MinValue>
+	  <MaxValue>99.22 Adding Fuel (Lean Condition)</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128) * 100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>07</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Long term fuel % trim—Bank 1</Description>
+	  <MinValue>-100 Subtracting Fuel (Rich Condition)</MinValue>
+	  <MaxValue>99.22 Adding Fuel (Lean Condition)</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128) * 100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>08</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Short term fuel % trim—Bank 2</Description>
+	  <MinValue>-100 Subtracting Fuel (Rich Condition)</MinValue>
+	  <MaxValue>99.22 Adding Fuel (Lean Condition)</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128) * 100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>09</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Long term fuel % trim—Bank 2</Description>
+	  <MinValue>-100 Subtracting Fuel (Rich Condition)</MinValue>
+	  <MaxValue>99.22 Adding Fuel (Lean Condition)</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128) * 100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>0A</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Fuel pressure</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>765</MaxValue>
+	  <Units>kPa (gauge)</Units>
+	  <Formula>A*3</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>0B</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Intake manifold absolute pressure</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>255</MaxValue>
+	  <Units>kPa (absolute)</Units>
+	  <Formula>A</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>0C</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Engine RPM</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>16,383.75</MaxValue>
+	  <Units>rpm</Units>
+	  <Formula>((A*256)+B)/4</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>0D</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Vehicle speed</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>255</MaxValue>
+	  <Units>km/h</Units>
+	  <Formula>A</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>0E</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Timing advance</Description>
+	  <MinValue>-64</MinValue>
+	  <MaxValue>63.5</MaxValue>
+	  <Units>° relative to #1 cylinder</Units>
+	  <Formula>A/2 - 64</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>0F</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Intake air temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>215</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>A-40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>10</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>MAF air flow rate</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>655.35</MaxValue>
+	  <Units>grams/sec</Units>
+	  <Formula>((A*256)+B) / 100</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>11</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Throttle position</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>12</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Commanded secondary air status</Description>
+	  <Formula>Bit encoded. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>13</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Oxygen sensors present</Description>
+	  <Formula>[A0..A3] == Bank 1, Sensors 1-4. [A4..A7] == Bank 2...</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>14</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 1, Sensor 1:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>14</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>14</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>15</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 1, Sensor 2:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>15</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>15</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>16</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 1, Sensor 3:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>16</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>16</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>17</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 1, Sensor 4:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>17</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>17</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>18</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 2, Sensor 1:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>18</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>18</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>19</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 2, Sensor 2:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>19</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>19</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1A</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 2, Sensor 3:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1A</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1A</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1B</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 2, Sensor 4:</Description>
+	  <Units>Volts</Units>
+	  <Formula>A/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1B</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Oxygen sensor voltage,</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>%</Units>
+	  <Formula>(B-128) * 100/128 (if B==$FF, sensor is not used in trim calc)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1B</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term fuel trim</Description>
+	  <MinValue>-100(lean)</MinValue>
+	  <MaxValue>99.2(rich)</MaxValue>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1C</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>OBD standards this vehicle conforms to</Description>
+	  <Formula>Bit encoded. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1D</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Oxygen sensors present</Description>
+	  <Formula>Similar to PID 13, but [A0..A7] == [B1S1, B1S2, B2S1, B2S2, B3S1, B3S2, B4S1, B4S2]</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1E</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Auxiliary input status</Description>
+	  <Formula>A0 == Power Take Off (PTO) status (1 == active)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1E</PID>
+	  <DataBytes>1</DataBytes>
+	  <Formula>[A1..A7] not used</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>1F</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Run time since engine start</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65,535</MaxValue>
+	  <Units>seconds</Units>
+	  <Formula>(A*256)+B</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>20</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [21 - 40]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $21..PID $40] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>21</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Distance traveled with malfunction indicator lamp (MIL) on</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65,535</MaxValue>
+	  <Units>km</Units>
+	  <Formula>(A*256)+B</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>22</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Fuel Rail Pressure (relative to manifold vacuum)</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>5177.265</MaxValue>
+	  <Units>kPa</Units>
+	  <Formula>((A*256)+B) * 0.079</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>23</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Fuel Rail Pressure (diesel, or gasoline direct inject)</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>655,350</MaxValue>
+	  <Units>kPa (gauge)</Units>
+	  <Formula>((A*256)+B) * 10</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>24</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S1_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.999</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535 or ((A*256)+B)/32768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>24</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>7.999</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535 or ((C*256)+D)/8192</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>24</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>25</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S2_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>25</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>25</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>26</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S3_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>26</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>26</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>27</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S4_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>27</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>27</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>28</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S5_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>28</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>28</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>29</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S6_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>29</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>29</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2A</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S7_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2A</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2A</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2B</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S8_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)*2/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2B</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>8</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((C*256)+D)*8/65535</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2B</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Voltage</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2C</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Commanded EGR</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2D</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>EGR Error</Description>
+	  <MinValue>-100</MinValue>
+	  <MaxValue>99.22</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128) * 100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2E</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Commanded evaporative purge</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>2F</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Fuel Level Input</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>30</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description># of warm-ups since codes cleared</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>255</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>A</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>31</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Distance traveled since codes cleared</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65,535</MaxValue>
+	  <Units>km</Units>
+	  <Formula>(A*256)+B</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>32</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Evap. System Vapor Pressure</Description>
+	  <MinValue>-8,192</MinValue>
+	  <MaxValue>8,192</MaxValue>
+	  <Units>Pa</Units>
+	  <Formula>((A*256)+B)/4 (A and B are two's complement signed)</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>33</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Barometric pressure</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>255</MaxValue>
+	  <Units>kPa (Absolute)</Units>
+	  <Formula>A</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>34</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S1_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>1.999</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>34</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>127.99</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>34</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>35</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S2_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>35</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>35</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>36</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S3_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>36</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>36</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>37</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S4_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>37</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>37</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>38</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S5_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>38</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>38</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>39</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S6_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>39</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>39</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3A</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S7_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3A</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3A</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3B</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>O2S8_WR_lambda(1):</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32,768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3B</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Equivalence Ratio</Description>
+	  <MinValue>-128</MinValue>
+	  <MaxValue>128</MaxValue>
+	  <Units>mA</Units>
+	  <Formula>((C*256)+D)/256 - 128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3B</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Current</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3C</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Catalyst Temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>6,513.5</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>((A*256)+B)/10 - 40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3C</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 1, Sensor 1</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3D</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Catalyst Temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>6,513.5</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>((A*256)+B)/10 - 40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3D</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 2, Sensor 1</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3E</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Catalyst Temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>6,513.5</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>((A*256)+B)/10 - 40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3E</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 1, Sensor 2</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3F</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Catalyst Temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>6,513.5</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>((A*256)+B)/10 - 40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>3F</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Bank 2, Sensor 2</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>40</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [41 - 60]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $41..PID $60] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>41</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Monitor status this drive cycle</Description>
+	  <Formula>Bit encoded. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>42</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Control module voltage</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65.535</MaxValue>
+	  <Units>V</Units>
+	  <Formula>((A*256)+B)/1000</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>43</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Absolute load value</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>25,700</MaxValue>
+	  <Units> %</Units>
+	  <Formula>((A*256)+B)*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>44</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Command equivalence ratio</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2</MaxValue>
+	  <Units>N/A</Units>
+	  <Formula>((A*256)+B)/32768</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>45</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Relative throttle position</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>46</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Ambient air temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>215</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>A-40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>47</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Absolute throttle position B</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>48</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Absolute throttle position C</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>49</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Accelerator pedal position D</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>4A</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Accelerator pedal position E</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>4B</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Accelerator pedal position F</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>4C</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Commanded throttle actuator</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>4D</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Time run with MIL on</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65,535</MaxValue>
+	  <Units>minutes</Units>
+	  <Formula>(A*256)+B</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>4E</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Time since trouble codes cleared</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65,535</MaxValue>
+	  <Units>minutes</Units>
+	  <Formula>(A*256)+B</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>4F</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Maximum value for equivalence ratio, oxygen sensor voltage, oxygen sensor current, and intake manifold absolute pressure</Description>
+	  <MinValue>0, 0, 0, 0</MinValue>
+	  <MaxValue>255, 255, 255, 2550</MaxValue>
+	  <Units>, V, mA, kPa</Units>
+	  <Formula>A, B, C, D*10</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>50</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>Maximum value for air flow rate from mass air flow sensor</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>2550</MaxValue>
+	  <Units>g/s</Units>
+	  <Formula>A*10, B, C, and D are reserved for future use</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>51</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Fuel Type</Description>
+	  <Formula>From fuel type table see below</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>52</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Ethanol fuel %</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>53</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Absolute Evap system Vapor Pressure</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>327.675</MaxValue>
+	  <Units>kPa</Units>
+	  <Formula>((A*256)+B)/200</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>54</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Evap system vapor pressure</Description>
+	  <MinValue>-32,767</MinValue>
+	  <MaxValue>32,768</MaxValue>
+	  <Units>Pa</Units>
+	  <Formula>((A*256)+B)-32767</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>55</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term secondary oxygen sensor trim bank 1 and bank 3</Description>
+	  <MinValue>-100</MinValue>
+	  <MaxValue>99.22</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>55</PID>
+	  <DataBytes>2</DataBytes>
+	  <Formula>(B-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>56</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Long term secondary oxygen sensor trim bank 1 and bank 3</Description>
+	  <MinValue>-100</MinValue>
+	  <MaxValue>99.22</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>56</PID>
+	  <DataBytes>2</DataBytes>
+	  <Formula>(B-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>57</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Short term secondary oxygen sensor trim bank 2 and bank 4</Description>
+	  <MinValue>-100</MinValue>
+	  <MaxValue>99.22</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>57</PID>
+	  <DataBytes>2</DataBytes>
+	  <Formula>(B-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>58</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Long term secondary oxygen sensor trim bank 2 and bank 4</Description>
+	  <MinValue>-100</MinValue>
+	  <MaxValue>99.22</MaxValue>
+	  <Units> %</Units>
+	  <Formula>(A-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>58</PID>
+	  <DataBytes>2</DataBytes>
+	  <Formula>(B-128)*100/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>59</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Fuel rail pressure (absolute)</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>655,350</MaxValue>
+	  <Units>kPa</Units>
+	  <Formula>((A*256)+B) * 10</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>5A</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Relative accelerator pedal position</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>5B</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Hybrid battery pack remaining life</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>100</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A*100/255</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>5C</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Engine oil temperature</Description>
+	  <MinValue>-40</MinValue>
+	  <MaxValue>210</MaxValue>
+	  <Units>°C</Units>
+	  <Formula>A - 40</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>5D</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Fuel injection timing</Description>
+	  <MinValue>-210.00</MinValue>
+	  <MaxValue>301.992</MaxValue>
+	  <Units>°</Units>
+	  <Formula>(((A*256)+B)-26,880)/128</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>5E</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Engine fuel rate</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>3212.75</MaxValue>
+	  <Units>L/h</Units>
+	  <Formula>((A*256)+B)*0.05</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>5F</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Emission requirements to which vehicle is designed</Description>
+	  <Formula>Bit Encoded</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>60</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [61 - 80]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $61..PID $80] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>61</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>DriverNULLs demand engine - percent torque</Description>
+	  <MinValue>-125</MinValue>
+	  <MaxValue>125</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A-125</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>62</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>Actual engine - percent torque</Description>
+	  <MinValue>-125</MinValue>
+	  <MaxValue>125</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A-125</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>63</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Engine reference torque</Description>
+	  <MinValue>0</MinValue>
+	  <MaxValue>65,535</MaxValue>
+	  <Units>Nm</Units>
+	  <Formula>A*256+B</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>64</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Engine percent torque data</Description>
+	  <MinValue>-125</MinValue>
+	  <MaxValue>125</MaxValue>
+	  <Units> %</Units>
+	  <Formula>A-125 Idle</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>64</PID>
+	  <DataBytes>5</DataBytes>
+	  <Formula>B-125 Engine point 1</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>64</PID>
+	  <DataBytes>5</DataBytes>
+	  <Formula>C-125 Engine point 2</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>64</PID>
+	  <DataBytes>5</DataBytes>
+	  <Formula>D-125 Engine point 3</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>64</PID>
+	  <DataBytes>5</DataBytes>
+	  <Formula>E-125 Engine point 4</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>65</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Auxiliary input / output supported</Description>
+	  <Formula>Bit Encoded</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>66</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Mass air flow sensor</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>67</PID>
+	  <DataBytes>3</DataBytes>
+	  <Description>Engine coolant temperature</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>68</PID>
+	  <DataBytes>7</DataBytes>
+	  <Description>Intake air temperature sensor</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>69</PID>
+	  <DataBytes>7</DataBytes>
+	  <Description>Commanded EGR and EGR Error</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>6A</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Commanded Diesel intake air flow control and relative intake air flow position</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>6B</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Exhaust gas recirculation temperature</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>6C</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Commanded throttle actuator control and relative throttle position</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>6D</PID>
+	  <DataBytes>6</DataBytes>
+	  <Description>Fuel pressure control system</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>6E</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Injection pressure control system</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>6F</PID>
+	  <DataBytes>3</DataBytes>
+	  <Description>Turbocharger compressor inlet pressure</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>70</PID>
+	  <DataBytes>9</DataBytes>
+	  <Description>Boost pressure control</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>71</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Variable Geometry turbo (VGT) control</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>72</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Wastegate control</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>73</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Exhaust pressure</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>74</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Turbocharger RPM</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>75</PID>
+	  <DataBytes>7</DataBytes>
+	  <Description>Turbocharger temperature</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>76</PID>
+	  <DataBytes>7</DataBytes>
+	  <Description>Turbocharger temperature</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>77</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>Charge air cooler temperature (CACT)</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>78</PID>
+	  <DataBytes>9</DataBytes>
+	  <Description>Exhaust Gas temperature (EGT) Bank 1</Description>
+	  <Formula>Special PID. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>79</PID>
+	  <DataBytes>9</DataBytes>
+	  <Description>Exhaust Gas temperature (EGT) Bank 2</Description>
+	  <Formula>Special PID. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>7A</PID>
+	  <DataBytes>7</DataBytes>
+	  <Description>Diesel particulate filter (DPF)</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>7B</PID>
+	  <DataBytes>7</DataBytes>
+	  <Description>Diesel particulate filter (DPF)</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>7C</PID>
+	  <DataBytes>9</DataBytes>
+	  <Description>Diesel Particulate filter (DPF) temperature</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>7D</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>NOx NTE control area status</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>7E</PID>
+	  <DataBytes>1</DataBytes>
+	  <Description>PM NTE control area status</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>7F</PID>
+	  <DataBytes>13</DataBytes>
+	  <Description>Engine run time</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>80</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [81 - A0]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $81..PID $A0] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>81</PID>
+	  <DataBytes>21</DataBytes>
+	  <Description>Engine run time for Auxiliary Emissions Control Device(AECD)</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>82</PID>
+	  <DataBytes>21</DataBytes>
+	  <Description>Engine run time for Auxiliary Emissions Control Device(AECD)</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>83</PID>
+	  <DataBytes>5</DataBytes>
+	  <Description>NOx sensor</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>84</PID>
+	  <Description>Manifold surface temperature</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>85</PID>
+	  <Description>NOx reagent system</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>86</PID>
+	  <Description>Particulate matter (PM) sensor</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>87</PID>
+	  <Description>Intake manifold absolute pressure</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>A0</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [A1 - C0]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $A1..PID $C0] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>C0</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>PIDs supported [C1 - E0]</Description>
+	  <Formula>Bit encoded [A7..D0] == [PID $C1..PID $E0] See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>C3</PID>
+	  <Formula>Returns numerous data, including Drive Condition ID and Engine Speed</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>C4</PID>
+	  <Formula>B5 is Engine Idle Request</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>01</Mode>
+	  <PID>C4</PID>
+	  <Formula>B6 is Engine Stop Request</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>02</Mode>
+	  <PID>02</PID>
+	  <DataBytes>2</DataBytes>
+	  <Description>Freeze frame trouble code</Description>
+	  <Formula>BCD encoded, See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>03</Mode>
+	  <Description>Request trouble codes</Description>
+	  <Formula>3 codes per message frame, BCD encoded. See below.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>04</Mode>
+	  <DataBytes>0</DataBytes>
+	  <Description>Clear trouble codes / Malfunction indicator lamp (MIL) / Check engine light</Description>
+	  <Formula>Clears all stored trouble codes and turns the MIL off.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0100</PID>
+	  <Description>OBD Monitor IDs supported ($01 – $20)</Description>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0101</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0102</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0103</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0104</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0105</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0106</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0107</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0108</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0109</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>010A</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>010B</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>010C</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>010D</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>010E</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>010F</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0110</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Rich to lean sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0201</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0202</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0203</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0204</PID>
+	  <Description>O2 Sensor Monitor Bank 1 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0205</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0206</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0207</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0208</PID>
+	  <Description>O2 Sensor Monitor Bank 2 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0209</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>020A</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>020B</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>020C</PID>
+	  <Description>O2 Sensor Monitor Bank 3 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>020D</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 1</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>020E</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 2</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>020F</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 3</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>05</Mode>
+	  <PID>0210</PID>
+	  <Description>O2 Sensor Monitor Bank 4 Sensor 4</Description>
+	  <MinValue>0.00</MinValue>
+	  <MaxValue>1.275</MaxValue>
+	  <Units>Volts</Units>
+	  <Formula>0.005 Lean to Rich sensor threshold voltage</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>09</Mode>
+	  <PID>00</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>mode 9 supported PIDs 01 to 20</Description>
+	  <Formula>Bit encoded</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>09</Mode>
+	  <PID>01</PID>
+	  <Description>VIN Message Count in command 09 02</Description>
+	  <Formula>Returns 1 line/packet (49 01 05 00 00 00 00);
+	INSERT INTO PIDReturns (Mode, PID, [Data bytes], Description, [Min value], [Max value], Units, Formula) VALUES where 05 means 05 packets will be returned in VIN digits.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>09</Mode>
+	  <PID>02</PID>
+	  <Description>Vehicle identification number (VIN)</Description>
+	  <Formula>Returns the VIN as a multi-frame response using the ISO 15765-2 protocol. This is typically five frames, with the first frame encoding the size and count.</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>09</Mode>
+	  <PID>04</PID>
+	  <Description>calibration ID</Description>
+	  <Formula>Returns multiple lines, ASCII coded</Formula>
+	</PIDCode>
+	<PIDCode>
+	  <Mode>09</Mode>
+	  <PID>06</PID>
+	  <DataBytes>4</DataBytes>
+	  <Description>calibration</Description>
+	</PIDCode>
+</PIDCodes>

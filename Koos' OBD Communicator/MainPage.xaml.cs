@@ -39,20 +39,13 @@ namespace Koos__OBD_Communicator
             ResetIndicator.Tap += ResetButton_Tap;
             PIDRequestButton.Tap += PIDRequestButton_Tap;
             GetRPMButton.Tap += GetRPMButton_Tap;
-            GetRPMButtonForce.Tap += GetRPMButtonForce_Tap;
+            GetConfigurationButton.Tap += GetConfigurationButton_Tap;
             InitButton.Tap += InitButton_Tap;
         }
 
-        void GetRPMButtonForce_Tap(object s, System.Windows.Input.GestureEventArgs e)
+        void GetConfigurationButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            updateStatus_async("Getting rpm..");
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, eventArgs) =>
-            {
-                string result = obd.get_real_rpm();
-                updateStatus_async("RPM: " + result);
-            };
-            worker.RunWorkerAsync();
+            ConfigurationData c = new ConfigurationData();
         }
 
         void GetRPMButton_Tap(object s, System.Windows.Input.GestureEventArgs e)

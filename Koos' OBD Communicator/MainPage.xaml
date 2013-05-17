@@ -64,9 +64,9 @@
                         <TextBlock x:Name="GetRPMText" Text="Get RPM" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
-                <ListBoxItem x:Name="GetRPMButtonForce">
+                <ListBoxItem x:Name="GetConfigurationButton">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="GetRPMTextForce" Text="Get RPM (forced)" TextWrapping="Wrap" FontSize="36" />
+                        <TextBlock x:Name="GetConfigurationText" Text="Get Configuration" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
             </ListBox>
