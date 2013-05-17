@@ -320,7 +320,15 @@ namespace Koos__OBD_Communicator
                             this.connectAndSendSync(message);
 
                             string response = this.ReceiveUntilGtSync();
-                            // parse response
+                            if (Message.isValid(response) != Message.ResponseValidity.Valid)
+                            {
+                                // skip for now.
+                            }
+                            else
+                            {
+                                // eigenlijk moet hier natuurlijk ook de mode en PID uit de response afgeleid worden.
+                                string data = Message.getMessageContents(response);
+                            }
                         }
                     }
                 }

@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Koos__OBD_Communicator
 {
-    class Message
+    public static class Message
     {
         public enum ResponseValidity { Valid, InvalidHeader, InvalidSize, InvalidContents };
 
-        public static ResponseValidity checkByteEncodedMessage(string response)
+        public static ResponseValidity isValid(string response)
         {
             string cleanedResponse = cleanReponse(response);
 
@@ -49,6 +49,13 @@ namespace Koos__OBD_Communicator
         public static string cleanReponse(string response)
         {
             return response.Trim(new Char[] { ' ', '\r', '>' }).Replace(" ", string.Empty);
+        }
+
+        public static string getMessageContents(string checkedResponse)
+        {
+            string cleanedResponse = cleanReponse(checkedResponse);
+
+            return cleanedResponse.Substring((cleanedResponse.Length - (getBytesInMessage(cleanedResponse) * 2)) + 4);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Koos__OBD_Communicator_Test
         {
             string supportedPIDs0_20_return = "7E8 06 41 20 A0 07 B0 11 \r\r>";
             string returnMessage_cleansed = "7E8064120A007B011";
-            Assert.IsTrue(Koos__OBD_Communicator.ByteEncodedMessages.cleanReponse(supportedPIDs0_20_return) == returnMessage_cleansed);
+            Assert.IsTrue(Koos__OBD_Communicator.Message.cleanReponse(supportedPIDs0_20_return) == returnMessage_cleansed);
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ namespace Koos__OBD_Communicator_Test
         {
             string returnMessage_cleansed = "7E8064120A007B011";
 
-            Assert.IsTrue(Koos__OBD_Communicator.ByteEncodedMessages.getBytesInMessage(returnMessage_cleansed) == 6);
+            Assert.IsTrue(Koos__OBD_Communicator.Message.getBytesInMessage(returnMessage_cleansed) == 6);
         }
 
         [TestMethod]
@@ -47,8 +47,8 @@ namespace Koos__OBD_Communicator_Test
         {
             string returnMessage_cleansed = "7E8064120A007B011";
 
-            Assert.IsTrue(Koos__OBD_Communicator.ByteEncodedMessages.validHeader(returnMessage_cleansed));
-            Assert.IsTrue(Koos__OBD_Communicator.ByteEncodedMessages.validSize(returnMessage_cleansed));
+            Assert.IsTrue(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed));
+            Assert.IsTrue(Koos__OBD_Communicator.Message.validSize(returnMessage_cleansed));
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace Koos__OBD_Communicator_Test
         {
             string returnMessage_cleansed = "7E8074120A007B011";
 
-            Assert.IsFalse(Koos__OBD_Communicator.ByteEncodedMessages.validSize(returnMessage_cleansed));
+            Assert.IsFalse(Koos__OBD_Communicator.Message.validSize(returnMessage_cleansed));
         }
 
         [TestMethod]
@@ -67,8 +67,8 @@ namespace Koos__OBD_Communicator_Test
             string returnMessage_cleansed_headerShort = "E8074120A007B011";
             string returnMessage_cleansed_headerWrong = "8E8074120A007B011";
 
-            Assert.IsFalse(Koos__OBD_Communicator.ByteEncodedMessages.validHeader(returnMessage_cleansed_headerShort));
-            Assert.IsFalse(Koos__OBD_Communicator.ByteEncodedMessages.validHeader(returnMessage_cleansed_headerWrong));
+            Assert.IsFalse(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed_headerShort));
+            Assert.IsFalse(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed_headerWrong));
         }
 
         [TestMethod]

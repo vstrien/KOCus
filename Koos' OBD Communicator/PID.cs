@@ -37,9 +37,9 @@ namespace Koos__OBD_Communicator
             ulong u_startPID = (ulong)startPID;
             ulong u_endPID = (ulong)endPID;
 
-            if (ByteEncodedMessages.checkByteEncodedMessage(response) == ByteEncodedMessages.ResponseValidity.Valid)
+            if (Message.isValid(response) == Message.ResponseValidity.Valid)
             {
-                string supportedSensors = ByteEncodedMessages.getSupportedSensorsFromByteEncodedMessage(response);
+                string supportedSensors = Message.getMessageContents(response);
 
                 UInt64 nHex = UInt64.Parse(supportedSensors, NumberStyles.HexNumber);
                 for (ulong currentPID_absolute = u_startPID; currentPID_absolute <= u_endPID; currentPID_absolute++)
