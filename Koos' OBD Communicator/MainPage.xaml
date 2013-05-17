@@ -64,6 +64,11 @@
                         <TextBlock x:Name="GetRPMText" Text="Get RPM" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
+                <ListBoxItem x:Name="GetRPMButtonForce">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="GetRPMTextForce" Text="Get RPM (forced)" TextWrapping="Wrap" FontSize="36" />
+                    </StackPanel>
+                </ListBoxItem>
             </ListBox>
         </Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="2">

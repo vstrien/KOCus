@@ -362,10 +362,15 @@ namespace Koos__OBD_Communicator
             }
             else
             {
-                this.connectAndSendSync("01 0C\r");
-                string rpm = this.ReceiveUntilGtSync();
-                return rpm;
+                return get_real_rpm();
             }
+        }
+
+        public string get_real_rpm()
+        {
+            this.connectAndSendSync("01 0C\r");
+            string rpm = this.ReceiveUntilGtSync();
+            return rpm;
         }
 
         #endregion high-level communication
