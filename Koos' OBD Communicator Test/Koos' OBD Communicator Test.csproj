@@ -88,7 +88,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MessageHandlingTests.cs" />
+    <Compile Include="UnitTests\MessageHandlingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTests\InterfaceTests.cs" />
   </ItemGroup>

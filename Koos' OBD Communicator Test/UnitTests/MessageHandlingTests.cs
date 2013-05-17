@@ -41,10 +41,9 @@ namespace Koos__OBD_Communicator_Test
             Assert.IsTrue(Koos__OBD_Communicator.ByteEncodedMessages.getBytesInMessage(returnMessage_cleansed) == 6);
         }
 
-
         [TestMethod]
         [Description("Test if valid return message is not mentioned with errors")]
-        public void TestValidationOfReturnMessage()
+        public void TestValidationOfValidReturnMessage()
         {
             string returnMessage_cleansed = "7E8064120A007B011";
 
@@ -52,6 +51,25 @@ namespace Koos__OBD_Communicator_Test
             Assert.IsTrue(Koos__OBD_Communicator.ByteEncodedMessages.validSize(returnMessage_cleansed));
         }
 
+        [TestMethod]
+        [Description("Test if return message with invalid number of bytes is recognized as invalid")]
+        public void TestValidationOfReturnMessageWrongSize()
+        {
+            string returnMessage_cleansed = "7E8074120A007B011";
+
+            Assert.IsFalse(Koos__OBD_Communicator.ByteEncodedMessages.validSize(returnMessage_cleansed));
+        }
+
+        [TestMethod]
+        [Description("Test if return message with wrong header is recognized as invalid")]
+        public void TestValidationOfReturnMessageWrongHeader()
+        {
+            string returnMessage_cleansed_headerShort = "E8074120A007B011";
+            string returnMessage_cleansed_headerWrong = "8E8074120A007B011";
+
+            Assert.IsFalse(Koos__OBD_Communicator.ByteEncodedMessages.validHeader(returnMessage_cleansed_headerShort));
+            Assert.IsFalse(Koos__OBD_Communicator.ByteEncodedMessages.validHeader(returnMessage_cleansed_headerWrong));
+        }
 
         [TestMethod]
         [Description("Test if valid return message with PID sensors is decoded correctly")]
