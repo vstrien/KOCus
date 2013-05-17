@@ -59,9 +59,9 @@
                         <TextBlock x:Name="PIDRequestText" Text="Request PIDs (+C)" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
-                <ListBoxItem x:Name="ScheduleRequestButton">
+                <ListBoxItem x:Name="GetRPMButton">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="ScheduleRequestText" Text="Schedule requests" TextWrapping="Wrap" FontSize="36" />
+                        <TextBlock x:Name="GetRPMText" Text="Get RPM" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
             </ListBox>

@@ -38,8 +38,20 @@ namespace Koos__OBD_Communicator
             InitializeComponent();
             ResetIndicator.Tap += ResetButton_Tap;
             PIDRequestButton.Tap += PIDRequestButton_Tap;
-            ScheduleRequestButton.Tap += ScheduleRequestButton_Tap;
+            GetRPMButton.Tap += GetRPMButton_Tap;
             InitButton.Tap += InitButton_Tap;
+        }
+
+        void GetRPMButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
+        {
+            updateStatus_async("Getting rpm..");
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += (sender, eventArgs) =>
+            {
+                string result = obd.get_rpm();
+                updateStatus_async("RPM: " + result);
+            };
+            worker.RunWorkerAsync();
         }
 
         void InitButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
@@ -85,10 +97,7 @@ namespace Koos__OBD_Communicator
             worker.RunWorkerAsync();
         }
 
-        void ScheduleRequestButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            //ConfigurationData c = new ConfigurationData();
-        }
+       
 
         void updateStatus_async(string newStatus)
         {

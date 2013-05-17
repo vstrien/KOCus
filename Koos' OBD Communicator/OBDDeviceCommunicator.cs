@@ -345,6 +345,29 @@ namespace Koos__OBD_Communicator
 
             return "Success";
         }
+
+        public string get_rpm()
+        {
+            if (this.PIDInformation == null)
+            {
+                return "First initialize!";
+            }
+            else if (this.isSupported(0x01, 0x0C) == PID.SupportedStatus.Unsupported)
+            {
+                return "Sensor wordt niet ondersteund.";
+            }
+            else if (this.isSupported(0x01, 0x0C) == PID.SupportedStatus.Unknown)
+            {
+                return "Geen gegevens over ondersteuning. Foutieve init?";
+            }
+            else
+            {
+                this.connectAndSendSync("01 0C\r");
+                string rpm = this.ReceiveUntilGtSync();
+                return rpm;
+            }
+        }
+
         #endregion high-level communication
 
     }
