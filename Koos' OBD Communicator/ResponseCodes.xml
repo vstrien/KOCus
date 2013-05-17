@@ -1,0 +1,11 @@
+﻿<Responses>
+  <Response Response="?" Description="Command not understood" />
+  <Response Response="BUFFER FULL" Description="Internal buffer full" />
+  <Response Response="BUS ERROR" Description="Invalid signal detected on bus" />
+  <Response Response="CAN ERROR" Description="Unable to initialize, send or receive CAN" />
+  <Response Response="DATA ERROR" Description="Incorrect or invalid response from vehicle" />
+  <Response Response="NO DATA" Description="No data response for request" />
+  <Response Response="OK" Description="Command successful" />
+  <Response Response="SEARCHING..." Description="Connecting to vehicle" />
+  <Response Response="UNABLE TO CONNECT" Description="No valid OBD protocol found" />
+</Responses>

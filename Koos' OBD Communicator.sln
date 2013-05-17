@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Koos' OBD Communicator", "Koos' OBD Communicator\Koos' OBD Communicator.csproj", "{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Koos' OBD Communicator Test", "Koos' OBD Communicator Test\Koos' OBD Communicator Test.csproj", "{0464428F-0EC4-42ED-81D3-D68183E33028}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}.Release|x86.ActiveCfg = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|ARM.ActiveCfg = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{0464428F-0EC4-42ED-81D3-D68183E33028}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

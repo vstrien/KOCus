@@ -1,0 +1,12 @@
+﻿<RequestCodes>
+  <RequestCode TestMode="01" Description="Show current data" />
+  <RequestCode TestMode="02" Description="Show freeqe frame data" />
+  <RequestCode TestMode="03" Description="Show diagnostic trouble codes" />
+  <RequestCode TestMode="04" Description="Clear trouble codes and stored values" />
+  <RequestCode TestMode="05" Description="Test results, oxygen sensors" />
+  <RequestCode TestMode="06" Description="Test results, non-continuously monitored" />
+  <RequestCode TestMode="07" Description="Show 'pending' trouble codes" />
+  <RequestCode TestMode="08" Description="Special control mode" />
+  <RequestCode TestMode="09" Description="Request vehicle information" />
+  <RequestCode TestMode="0A" Description="Request permanent trouble codes" />
+</RequestCodes>
