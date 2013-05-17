@@ -21,7 +21,7 @@ namespace Koos__OBD_Communicator
     {
         // global settings, to be moved!
         OBDDeviceCommunicator obd = new OBDDeviceCommunicator(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000"));
-
+        ConfigurationData configData = new ConfigurationData();
         string ON = "1", 
                OFF = "0", 
                AT_RESET = "Z", 
@@ -39,13 +39,7 @@ namespace Koos__OBD_Communicator
             ResetIndicator.Tap += ResetButton_Tap;
             PIDRequestButton.Tap += PIDRequestButton_Tap;
             GetRPMButton.Tap += GetRPMButton_Tap;
-            GetConfigurationButton.Tap += GetConfigurationButton_Tap;
             InitButton.Tap += InitButton_Tap;
-        }
-
-        void GetConfigurationButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            ConfigurationData c = new ConfigurationData();
         }
 
         void GetRPMButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
@@ -67,7 +61,7 @@ namespace Koos__OBD_Communicator
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += (sender, eventArgs) =>
             {
-                string result = this.obd.init_communication(new Dictionary<string, string>());
+                string result = this.obd.init_communication(this.configData);
                 if (result == "Success")
                 {
                     updateStatus_async("Init successful.");

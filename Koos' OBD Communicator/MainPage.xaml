@@ -64,11 +64,6 @@
                         <TextBlock x:Name="GetRPMText" Text="Get RPM" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
-                <ListBoxItem x:Name="GetConfigurationButton">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="GetConfigurationText" Text="Get Configuration" TextWrapping="Wrap" FontSize="36" />
-                    </StackPanel>
-                </ListBoxItem>
             </ListBox>
         </Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="2">

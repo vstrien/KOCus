@@ -260,7 +260,7 @@ namespace Koos__OBD_Communicator
             return this.PIDInformation.isSupported(mode, nPID);
         }
 
-        public string init_communication(Dictionary<string, string> vocabulary)
+        public string init_communication(ConfigurationData currentConfiguration)
         {
             this.PIDInformation = new PID();
 
@@ -292,58 +292,39 @@ namespace Koos__OBD_Communicator
             //this.ReceiveUntilGtSync();
             this.connectAndSendSync("AT E0\r");
             this.ReceiveUntilGtSync();
-            
-            // check PID sensors (0-20)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (0-20)"]);
-            this.connectAndSendSync("01 00\r");
-            string supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0x0, 0x20, supportedPIDs))
-                return "Error, unexpected response from 01 00" + Environment.NewLine + supportedPIDs;
 
-            // check PID sensors (21-40)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (21-40)"]);
-            this.connectAndSendSync("01 20\r");
-            supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0x21, 0x40, supportedPIDs))
-                return "Error, unexpected response from 01 20" + Environment.NewLine + supportedPIDs;
-
-            // check PID sensors (41-60)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (41-60)"]);
-            this.connectAndSendSync("01 40\r");
-            supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0x41, 0x60, supportedPIDs))
-                return "Error, unexpected response from 01 40" + Environment.NewLine + supportedPIDs;
-
-            // check PID sensors (61-80)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (61-80)"]);
-            this.connectAndSendSync("01 60\r");
-            supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0x61, 0x80, supportedPIDs))
-                return "Error, unexpected response from 01 60" + Environment.NewLine + supportedPIDs;
-
-            // check PID sensors (81-A0)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (81-A0)"]);
-            this.connectAndSendSync("01 80\r");
-            supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0x80, 0xA0, supportedPIDs))
-                return "Error, unexpected response from 01 80" + Environment.NewLine + supportedPIDs;
-
-
-            // check PID sensors (A1 - C0)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (A1 - C0)"]);
-            this.connectAndSendSync("01 A0\r");
-            supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0xA1, 0xC0, supportedPIDs))
-                return "Error, unexpected response from 01 C0" + Environment.NewLine + supportedPIDs;
-
-            // check PID sensors (C1 - E0)
-            //this.connectAndSendSync(vocabulary["PIDS SUPPORTED (C1 - E0)"]);
-            this.connectAndSendSync("01 C0");
-            supportedPIDs = this.ReceiveUntilGtSync();
-            if (!this.PIDInformation.parseSupportedPIDs(1, 0xC1, 0xE0, supportedPIDs))
-                return "Error, unexpected response from 01 E0" + Environment.NewLine + supportedPIDs;
+            foreach (SensorAvailability SensorsToCheck in currentConfiguration.sensorLists)
+            {
+                string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + "\r";
+                this.connectAndSendSync(message);
+                string supportedPIDs = this.ReceiveUntilGtSync();
+                if (!this.PIDInformation.parseSupportedPIDs(SensorsToCheck.mode, SensorsToCheck.firstPID, SensorsToCheck.lastPID, supportedPIDs))
+                    ; // well, shit happens. For now, just skip.
+            }
 
             return "Success";
+        }
+
+        public void getSensorValues(ConfigurationData currentConfiguration)
+        {
+            foreach (SensorAvailability AvailableSensors in currentConfiguration.sensorLists)
+            {
+                if (this.PIDInformation.isSupported(AvailableSensors.mode, AvailableSensors.firstPID) != PID.SupportedStatus.Unknown)
+                {
+                    foreach (var currentSensor in AvailableSensors.PIDSensors)
+                    {
+                        if (this.PIDInformation.isSupported(currentSensor.mode, currentSensor.PID) == PID.SupportedStatus.Supported)
+                        {
+                            // Query maar!
+                            string message = currentSensor.mode.ToString("D2") + " " + currentSensor.PID.ToString("D2") + "\r";
+                            this.connectAndSendSync(message);
+
+                            string response = this.ReceiveUntilGtSync();
+                            // parse response
+                        }
+                    }
+                }
+            }
         }
 
         public string get_rpm()
