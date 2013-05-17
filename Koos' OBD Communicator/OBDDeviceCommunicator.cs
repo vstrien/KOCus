@@ -305,7 +305,7 @@ namespace Koos__OBD_Communicator
             return "Success";
         }
 
-        public void getSensorValues(ConfigurationData currentConfiguration)
+        public void getSensorValuesSync(ConfigurationData currentConfiguration)
         {
             foreach (SensorAvailability AvailableSensors in currentConfiguration.sensorLists)
             {
