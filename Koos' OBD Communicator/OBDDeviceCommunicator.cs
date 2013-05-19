@@ -10,7 +10,7 @@ namespace Koos__OBD_Communicator
 {
     class OBDDeviceCommunicator
     {
-        PID PIDInformation;
+        public PID PIDInformation { public get; private set; }
 
         public event EventHandler<OBDSensorDataEventArgs> RaiseOBDSensorData;
 

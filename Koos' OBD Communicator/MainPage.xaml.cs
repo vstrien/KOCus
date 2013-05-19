@@ -42,6 +42,24 @@ namespace Koos__OBD_Communicator
                 if (result == "Success")
                 {
                     updateStatus_async("Init successful.");
+                    int supported = 0;
+                    int mentioned = 0;
+                    for (int mode = 0; mode < this.obd.PIDInformation.supportedPIDs.Length; mode++)
+                    {
+                        for (int PID = 0; PID < this.obd.PIDInformation.supportedPIDs[mode].Length; PID++)
+                        {
+                            switch(this.obd.PIDInformation.supportedPIDs[mode][PID]) {
+                                case Koos__OBD_Communicator.PID.SupportedStatus.Supported:
+                                    supported++;
+                                    mentioned++;
+                                    break;
+                                case Koos__OBD_Communicator.PID.SupportedStatus.Unsupported:
+                                    mentioned++;
+                                    break;
+                            }
+                                
+                        }
+                    }
                 }
                 else
                 {
