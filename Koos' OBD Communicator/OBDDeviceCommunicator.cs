@@ -11,6 +11,9 @@ namespace Koos__OBD_Communicator
     class OBDDeviceCommunicator
     {
         PID PIDInformation;
+
+        public event EventHandler<OBDSensorDataEventArgs> RaiseOBDSensorData;
+
         #region socket communication
         IPAddress hostaddress;
         int port;
@@ -328,6 +331,7 @@ namespace Koos__OBD_Communicator
                             {
                                 // eigenlijk moet hier natuurlijk ook de mode en PID uit de response afgeleid worden.
                                 string data = Message.getMessageContents(response);
+                                OnRaiseOBDSensorData(new OBDSensorDataEventArgs(currentSensor.mode, currentSensor.PID, currentSensor.bytes, data));
                             }
                         }
                     }
@@ -364,5 +368,32 @@ namespace Koos__OBD_Communicator
 
         #endregion high-level communication
 
+        protected virtual void OnRaiseOBDSensorData(OBDSensorDataEventArgs eventArgs)
+        {
+            EventHandler<OBDSensorDataEventArgs> handler = RaiseOBDSensorData;
+
+            // Only execute if there are any subscribers
+            if (handler != null)
+            {
+                handler(this, eventArgs);
+            }
+
+        }
+    }
+
+    public class OBDSensorDataEventArgs : EventArgs
+    {
+        public OBDSensorDataEventArgs(int mode, int PID, int length, string message)
+        {
+            this.mode = mode;
+            this.PID = PID;
+            this.length = length;
+            this.message = message;   
+        }
+
+        public int mode { get; private set; }
+        public int PID { get; private set; }
+        public int length { get; private set; }
+        public string message { get; private set; }
     }
 }
