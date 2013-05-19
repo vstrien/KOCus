@@ -9,7 +9,7 @@ namespace Koos__OBD_Communicator
     public class PID
     {
         public enum SupportedStatus { Supported, Unsupported, Unknown };
-        public SupportedStatus[][] supportedPIDs { public get; private set; }
+        public SupportedStatus[][] supportedPIDs { get; private set; }
 
         public const int defaultNumberOfModes = 9;
         public const int defaultNumberOfPIDsPerMode = 0xFF;
@@ -20,7 +20,7 @@ namespace Koos__OBD_Communicator
             for (int i = 0; i < this.supportedPIDs.Count(); i++)
             {
                 this.supportedPIDs[i] = new SupportedStatus[PIDsPerMode];
-                for (int j = 0; j <= PIDsPerMode; j++)
+                for (int j = 0; j < PIDsPerMode; j++)
                 {
                     this.supportedPIDs[i][j] = SupportedStatus.Unknown;
                 }

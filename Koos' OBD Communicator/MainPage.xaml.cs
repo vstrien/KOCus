@@ -38,6 +38,8 @@ namespace Koos__OBD_Communicator
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += (sender, eventArgs) =>
             {
+                this.obd.RaiseInitResponse += obd_RaiseResponse;
+                
                 string result = this.obd.init_communication(this.configData);
                 if (result == "Success")
                 {
@@ -57,17 +59,24 @@ namespace Koos__OBD_Communicator
                                     mentioned++;
                                     break;
                             }
-                                
                         }
                     }
+                    updateStatus_async("Mentioned: " + mentioned.ToString());
+                    updateStatus_async("Supported: " + supported.ToString());
                 }
                 else
                 {
                     updateStatus_async("Init failed.");
                     updateStatus_async(result);
                 }
+                this.obd.RaiseInitResponse -= obd_RaiseResponse;
             };
             worker.RunWorkerAsync();
+        }
+
+        void obd_RaiseResponse(object sender, ResponseEventArgs e)
+        {
+            updateStatus_async(e.message);
         }
 
         void updateStatus_async(string newStatus)
@@ -92,14 +101,19 @@ namespace Koos__OBD_Communicator
             worker.DoWork += (sender, eventArgs) =>
             {
                 this.obd.RaiseOBDSensorData += obd_newOBDSensorData;
+                this.obd.RaisePIDResponse += obd_RaiseResponse;
+                updateStatus_async("Getting values...");
                 this.obd.getSensorValuesSync(this.configData);
+                updateStatus_async("Finished getting PID values.");
+                this.obd.RaiseOBDSensorData -= obd_newOBDSensorData;
+                this.obd.RaisePIDResponse -= obd_RaiseResponse;
             };
             worker.RunWorkerAsync();
         }
 
         private void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
         {
-            string message = e.mode.ToString("D2") + " " + e.PID.ToString("D2") + " (" + e.length.ToString() + "): " + e.message;
+            string message = e.mode.ToString("D2") + " " + e.PIDCode.ToString("D2") + " (" + e.length.ToString() + "): " + e.message;
             updateStatus_async(message);
         }
 

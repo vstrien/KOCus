@@ -10,10 +10,11 @@ namespace Koos__OBD_Communicator
 {
     class OBDDeviceCommunicator
     {
-        public PID PIDInformation { public get; private set; }
+        public PID PIDInformation { get; private set; }
 
         public event EventHandler<OBDSensorDataEventArgs> RaiseOBDSensorData;
-
+        public event EventHandler<ResponseEventArgs> RaiseInitResponse;
+        public event EventHandler<ResponseEventArgs> RaisePIDResponse;
         #region socket communication
         IPAddress hostaddress;
         int port;
@@ -102,7 +103,7 @@ namespace Koos__OBD_Communicator
                     if (e4.SocketError == SocketError.Success)
                     {
                         response += Encoding.UTF8.GetString(e4.Buffer, e4.Offset, e4.BytesTransferred);
-                        response = response.Trim('\0', '\n', '\r');
+                        response = response.Trim('\0', '\n', '\r', ' ');
                     }
                     else
                     {
@@ -267,41 +268,45 @@ namespace Koos__OBD_Communicator
         {
             this.PIDInformation = new PID();
 
+            this.OnRaiseInitResponse(new ResponseEventArgs("Hello from init_communication!"));
+
             // connect
             this.connect();
             
             //empty pipeline
-            this.ReceiveAsync(500);
+            this.OnRaiseInitResponse(new ResponseEventArgs("Initial pipeline: " + this.ReceiveAsync(500)));
 
             // reset device
             //this.connectAndSendSync(vocabulary["RESET"]);
             this.connectAndSendSync("AT Z\r");
-            this.ReceiveUntilGtSync();
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT Z: " + this.ReceiveUntilGtSync()));
 
             // set line feed off
             //this.connectAndSendSync(vocabulary["LF OFF"]);
             //this.ReceiveUntilGtSync();
             this.connectAndSendSync("AT L0\r");
-            this.ReceiveUntilGtSync();
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT L0: " + this.ReceiveUntilGtSync()));
 
             // set headers on
             //this.connectAndSendSync(vocabulary["HEADERS ON"]);
             //this.ReceiveUntilGtSync();
             this.connectAndSendSync("AT H1\r");
-            this.ReceiveUntilGtSync();
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT H1: " + this.ReceiveUntilGtSync()));
 
             // set echo off
             //this.connectAndSendSync(vocabulary["ECHO OFF"]);
             //this.ReceiveUntilGtSync();
             this.connectAndSendSync("AT E0\r");
-            this.ReceiveUntilGtSync();
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT E0: " + this.ReceiveUntilGtSync()));
 
             foreach (SensorAvailability SensorsToCheck in currentConfiguration.sensorLists)
             {
                 string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + "\r";
                 this.connectAndSendSync(message);
                 string supportedPIDs = this.ReceiveUntilGtSync();
+                this.OnRaiseInitResponse(new ResponseEventArgs("[RR] " + message + ": " + supportedPIDs));
                 if (!this.PIDInformation.parseSupportedPIDs(SensorsToCheck.mode, SensorsToCheck.firstPID, SensorsToCheck.lastPID, supportedPIDs))
+                    this.OnRaiseInitResponse(new ResponseEventArgs("Not recognized " + message + ": " + supportedPIDs));
                     ; // well, shit happens. For now, just skip.
             }
 
@@ -330,6 +335,7 @@ namespace Koos__OBD_Communicator
                             if (Message.isValid(response) != Message.ResponseValidity.Valid)
                             {
                                 // Als we niets met het teruggekomen bericht aankunnen, kunnen we het voor nu overslaan.
+                                OnRaisePIDResponse(new ResponseEventArgs("Not valid: " + response));
                             }
                             else
                             {
@@ -354,23 +360,54 @@ namespace Koos__OBD_Communicator
             {
                 handler(this, eventArgs);
             }
+        }
 
+        protected virtual void OnRaiseInitResponse(ResponseEventArgs eventArgs)
+        {
+            EventHandler<ResponseEventArgs> handler = RaiseInitResponse;
+
+            // Only execute if there are any subscribers
+            if (handler != null)
+            {
+                handler(this, eventArgs);
+            }
+        }
+
+        protected virtual void OnRaisePIDResponse(ResponseEventArgs eventArgs)
+        {
+            EventHandler<ResponseEventArgs> handler = RaisePIDResponse;
+
+            // Only execute if there are any subscribers
+            if (handler != null)
+            {
+                handler(this, eventArgs);
+            }
         }
     }
 
     public class OBDSensorDataEventArgs : EventArgs
     {
-        public OBDSensorDataEventArgs(int mode, int PID, int length, string message)
+        public OBDSensorDataEventArgs(int mode, int PIDCode, int length, string message)
         {
             this.mode = mode;
-            this.PID = PID;
+            this.PIDCode = PIDCode;
             this.length = length;
             this.message = message;   
         }
 
         public int mode { get; private set; }
-        public int PID { get; private set; }
+        public int PIDCode { get; private set; }
         public int length { get; private set; }
+        public string message { get; private set; }
+    }
+
+    public class ResponseEventArgs : EventArgs
+    {
+        public ResponseEventArgs(string message)
+        {
+            this.message = message;
+        }
+
         public string message { get; private set; }
     }
 }

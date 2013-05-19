@@ -48,7 +48,7 @@ namespace Koos__OBD_Communicator
 
         public static string cleanReponse(string response)
         {
-            return response.Trim(new Char[] { ' ', '\r', '>' }).Replace(" ", string.Empty);
+            return response.Trim(new Char[] { ' ', '\r', '>', '\n' }).Replace(" ", string.Empty);
         }
 
         public static string getMessageContents(string checkedResponse)

@@ -72,6 +72,19 @@ namespace Koos__OBD_Communicator_Test
         }
 
         [TestMethod]
+        [Description("Test if valid return message with newlines doesn't throw errors")]
+        public void TestNoErrorReturnMessage()
+        {
+            int mode = 01;
+            int pid = 00;
+            string returnMessage = "7E8 06 41 00 BE 3F A8 11 \r\n\r\n>";
+
+
+            Koos__OBD_Communicator.PID testPID = new Koos__OBD_Communicator.PID();
+            Assert.IsTrue(testPID.parseSupportedPIDs(mode, 0x01, 0x20, returnMessage));
+        }
+
+        [TestMethod]
         [Description("Test if valid return message with PID sensors is decoded correctly")]
         public void TestDecodingOfReturnMessage()
         {
