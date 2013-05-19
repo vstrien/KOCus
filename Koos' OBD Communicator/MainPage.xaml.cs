@@ -22,36 +22,13 @@ namespace Koos__OBD_Communicator
         // global settings, to be moved!
         OBDDeviceCommunicator obd = new OBDDeviceCommunicator(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000"));
         ConfigurationData configData = new ConfigurationData();
-        string ON = "1", 
-               OFF = "0", 
-               AT_RESET = "Z", 
-               AT_LINEFEED = "L", 
-               AT_ECHO = "E", 
-               AT_HEADERS = "H", 
-               AT_VOLTAGE = "RV", 
-               AVAILABLE_SENSORS_0_20 = "01 00";
-
 
         // Constructor
         public MainPage()
         {
             InitializeComponent();
-            ResetIndicator.Tap += ResetButton_Tap;
             PIDRequestButton.Tap += PIDRequestButton_Tap;
-            GetRPMButton.Tap += GetRPMButton_Tap;
             InitButton.Tap += InitButton_Tap;
-        }
-
-        void GetRPMButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
-        {
-            updateStatus_async("Getting rpm..");
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, eventArgs) =>
-            {
-                string result = obd.get_rpm();
-                updateStatus_async("RPM: " + result);
-            };
-            worker.RunWorkerAsync();
         }
 
         void InitButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
@@ -65,28 +42,6 @@ namespace Koos__OBD_Communicator
                 if (result == "Success")
                 {
                     updateStatus_async("Init successful.");
-                    for (int mode = 1; mode <= PID.defaultNumberOfModes; mode++)
-                    {
-                        for (int nPID = 0; nPID < PID.defaultNumberOfPIDsPerMode; nPID++)
-                        {
-                            var supported = this.obd.isSupported(mode, nPID);
-                            string isSupported;
-
-                            switch (supported)
-                            {
-                                case PID.SupportedStatus.Supported:
-                                    isSupported = "Supported";
-                                    break;
-                                case PID.SupportedStatus.Unsupported:
-                                    isSupported = "Unsupported";
-                                    break;
-                                default:
-                                    isSupported = "Unknown";
-                                    break;
-                            }
-                            updateStatus_async(mode.ToString() + " " + nPID.ToString() + ": " + isSupported);
-                        }
-                    }
                 }
                 else
                 {
@@ -96,8 +51,6 @@ namespace Koos__OBD_Communicator
             };
             worker.RunWorkerAsync();
         }
-
-       
 
         void updateStatus_async(string newStatus)
         {
@@ -113,38 +66,6 @@ namespace Koos__OBD_Communicator
             });
         }
 
-
-        void ResetButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
-        {
-            updateStatus_async("Resetting");
-
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, eventArgs) =>
-            {
-                Thread.Sleep(1000);
-                string message = "AT " + AT_RESET + "\r";
-
-                SocketError result = obd.connectAndSendSync(message);
-                if (result == SocketError.Success)
-                {
-                    string response = obd.ReceiveUntilGtSync();
-                    if (response.Length == 0)
-                    {
-                        updateStatus_async("No R_response");
-                    }
-                    else
-                    {
-                        updateStatus_async("R_Response: " + response);
-                    }
-                }
-                else
-                {
-                    updateStatus_async("R_Status: " + result.ToString());
-                }
-            };
-            worker.RunWorkerAsync();
-        }
-
         void PIDRequestButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
         {
             updateStatus_async("Requesting PIDs");
@@ -152,28 +73,16 @@ namespace Koos__OBD_Communicator
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += (sender, eventArgs) =>
             {
-                Thread.Sleep(1000);
-                string message = AVAILABLE_SENSORS_0_20 + "\r";
-
-                SocketError result = obd.connectAndSendSync(message);
-                if (result == SocketError.Success)
-                {
-                    string response = obd.ReceiveUntilGtSync();
-                    if (response.Length == 0)
-                    {
-                        updateStatus_async("No P_response");
-                    }
-                    else
-                    {
-                        updateStatus_async("P_Response: " + response);
-                    }
-                }
-                else
-                {
-                    updateStatus_async("P_Status: " + result.ToString());
-                }
+                this.obd.RaiseOBDSensorData += obd_newOBDSensorData;
+                this.obd.getSensorValuesSync(this.configData);
             };
             worker.RunWorkerAsync();
+        }
+
+        private void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
+        {
+            string message = e.mode.ToString("D2") + " " + e.PID.ToString("D2") + " (" + e.length.ToString() + "): " + e.message;
+            updateStatus_async(message);
         }
 
         

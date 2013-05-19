@@ -308,24 +308,28 @@ namespace Koos__OBD_Communicator
             return "Success";
         }
 
+        // Haal voor alle beschikbare sensors waarden op
         public void getSensorValuesSync(ConfigurationData currentConfiguration)
         {
             foreach (SensorAvailability AvailableSensors in currentConfiguration.sensorLists)
             {
+                // Wanneer van een sensor-range (van 32 sensors) de beschikbaarheid onbekend is, is uitvragen / loopen zinloos.
                 if (this.PIDInformation.isSupported(AvailableSensors.mode, AvailableSensors.firstPID) != PID.SupportedStatus.Unknown)
                 {
                     foreach (var currentSensor in AvailableSensors.PIDSensors)
                     {
+                        // Alleen wanneer een PID ook daadwerkelijk beschikbaar & ondersteund is, mag deze uitgevraagd worden.
                         if (this.PIDInformation.isSupported(currentSensor.mode, currentSensor.PID) == PID.SupportedStatus.Supported)
                         {
-                            // Query maar!
+                            // PID is beschikbaar. Message opstellen om mee uit te vragen (bijv. "01 02\r")
                             string message = currentSensor.mode.ToString("D2") + " " + currentSensor.PID.ToString("D2") + "\r";
                             this.connectAndSendSync(message);
 
+                            // Wacht de volgende ">" af.
                             string response = this.ReceiveUntilGtSync();
                             if (Message.isValid(response) != Message.ResponseValidity.Valid)
                             {
-                                // skip for now.
+                                // Als we niets met het teruggekomen bericht aankunnen, kunnen we het voor nu overslaan.
                             }
                             else
                             {
@@ -337,33 +341,6 @@ namespace Koos__OBD_Communicator
                     }
                 }
             }
-        }
-
-        public string get_rpm()
-        {
-            if (this.PIDInformation == null)
-            {
-                return "First initialize!";
-            }
-            else if (this.isSupported(0x01, 0x0C) == PID.SupportedStatus.Unsupported)
-            {
-                return "Sensor wordt niet ondersteund.";
-            }
-            else if (this.isSupported(0x01, 0x0C) == PID.SupportedStatus.Unknown)
-            {
-                return "Geen gegevens over ondersteuning. Foutieve init?";
-            }
-            else
-            {
-                return get_real_rpm();
-            }
-        }
-
-        public string get_real_rpm()
-        {
-            this.connectAndSendSync("01 0C\r");
-            string rpm = this.ReceiveUntilGtSync();
-            return rpm;
         }
 
         #endregion high-level communication

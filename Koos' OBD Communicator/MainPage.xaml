@@ -44,11 +44,6 @@
                         <toolkit:WrapPanel />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
-                <ListBoxItem x:Name="ResetIndicator">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="ResetText" Text="Reset (-C)" TextWrapping="Wrap" FontSize="36" />
-                    </StackPanel>
-                </ListBoxItem>
                 <ListBoxItem x:Name="InitButton">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="InitText" Text="Init session" TextWrapping="Wrap" FontSize="36" />
@@ -57,11 +52,6 @@
                 <ListBoxItem x:Name="PIDRequestButton">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="PIDRequestText" Text="Request PIDs (+C)" TextWrapping="Wrap" FontSize="36" />
-                    </StackPanel>
-                </ListBoxItem>
-                <ListBoxItem x:Name="GetRPMButton">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="GetRPMText" Text="Get RPM" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
             </ListBox>
