@@ -4,9 +4,40 @@
     <AvailablePIDSensors>
       <PIDSensor PID="01" bytes="04" Description="Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)" />
       <PIDSensor PID="03" bytes="02" Description="Fuel system status" />
-      <PIDSensor PID="04" bytes="01" Description="Calculated engine load value" Formula="A*100/255" />
-      <PIDSensor PID="05" bytes="01" Description="Engine coolant temperature" Formula="A-40" />
+      <PIDSensor PID="04" bytes="01" Description="Calculated engine load value (%)" Formula="A*100/255" />
+      <PIDSensor PID="05" bytes="01" Description="Engine coolant temperature (C)" Formula="A-40" />
+      <PIDSensor PID="06" bytes="01" Description="Short term fuel (%) trim—Bank 1" Formula="(A-128) * 100/128" />
+      <PIDSensor PID="06" bytes="01" Description="Short term fuel (%) trim—Bank 1" Formula="(A-128) * 100/128" />
+      <PIDSensor PID="06" bytes="01" Description="Short term fuel (%) trim—Bank 2" Formula="(A-128) * 100/128" />
+      <PIDSensor PID="06" bytes="01" Description="Short term fuel (%) trim—Bank 2" Formula="(A-128) * 100/128" />
+      <PIDSensor PID="0A" bytes="01" Description="Fuel pressure (kPa - gauge)" Formula="A*3" />
+      <PIDSensor PID="0B" bytes="01" Description="Intake manifold absolute pressure (kPa - absolute)" Formula="A" />
       <PIDSensor PID="0C" bytes="02" Description="Engine RPM" Formula="((A*256)+B)/4" />
+      <PIDSensor PID="0D" bytes="01" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="0E" bytes="01" Description="Timing advance (degrees relative to #1 cylinder)" Formula="A/2 - 64" />
+      <PIDSensor PID="0F" bytes="01" Description="Intake air temperature" Formula="A-40" />
+      <PIDSensor PID="10" bytes="02" Description="MAF air flow rate (grams / sec)" Formula="((A*256)+B) / 100" />
+      <PIDSensor PID="11" bytes="01" Description="Throttle position (%)" Formula="A*100/255" />
+      <PIDSensor PID="12" bytes="01" Description="Commanded secondary air status" />
+      <PIDSensor PID="13" bytes="01" Description="Oxygen sensors present" />
+      
+      <!--
+      Sensors met dubbele waarden: moet nog datastructuur voor bedacht worden.
+      <PIDSensor PID="14" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="15" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="16" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="17" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="18" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="19" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="1A" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
+      <PIDSensor PID="1B" bytes="02" Description="Bank 2, Sensor 4:
+Oxygen sensor voltage,
+Short term fuel trim (V, %)" Formula="A" />-->
+      <PIDSensor PID="1C" bytes="01" Description="OBD standards this vehicle conforms to" />
+      <PIDSensor PID="1D" bytes="01" Description="Oxygen sensors present" />
+      <PIDSensor PID="1E" bytes="01" Description="Auxiliary input status" />
+      <PIDSensor PID="1F" bytes="02" Description="Run time since engine start (sec.)" Formula="A" />
+      <PIDSensor PID="1D" bytes="01" Description="Vehicle speed (km/h)" Formula="A" />
     </AvailablePIDSensors>
   </SensorAvailability>
   <SensorAvailability Mode="01" PID="20" bytes="04" firstPID="21" lastPID="40" Description="PIDs supported [21 - 40]">
@@ -17,13 +48,16 @@
   </SensorAvailability>
   <SensorAvailability Mode="01" PID="40" bytes="04" firstPID="41" lastPID="60" Description="PIDs supported [41 - 60]">
     <AvailablePIDSensors>
+      <PIDSensor PID="46" bytes="01" Description="Ambient Air temperature" Formula="A-40" />
+      <PIDSensor PID="5C" bytes="01" Description="Engine Oil temperature" Formula="A-40" />
     </AvailablePIDSensors>
   </SensorAvailability>
   <SensorAvailability Mode="01" PID="60" bytes="04" firstPID="61" lastPID="80" Description="PIDs supported [61 - 80]">
     <AvailablePIDSensors>
+      <PIDSensor PID="61" bytes="01" Description="Driver's demand engine - percent torque" Formula="A-125" />
     </AvailablePIDSensors>
   </SensorAvailability>
-  <SensorAvailability Mode="01" PID="80" bytes="04" firstPID="81" lastPID="A0" Description="PIDs supported [81 - A0]">
+  <!--<SensorAvailability Mode="01" PID="80" bytes="04" firstPID="81" lastPID="A0" Description="PIDs supported [81 - A0]">
     <AvailablePIDSensors>
     </AvailablePIDSensors>
   </SensorAvailability>
@@ -34,5 +68,5 @@
   <SensorAvailability Mode="01" PID="80" bytes="04" firstPID="C1" lastPID="E0" Description="PIDs supported [81 - A0]">
     <AvailablePIDSensors>
     </AvailablePIDSensors>
-  </SensorAvailability>
+  </SensorAvailability>-->
 </PIDList>
