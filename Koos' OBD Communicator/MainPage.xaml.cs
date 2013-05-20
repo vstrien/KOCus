@@ -14,6 +14,7 @@ using System.Threading;
 using System.Text;
 using Microsoft.Phone.Controls;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Koos__OBD_Communicator
 {
@@ -22,6 +23,7 @@ namespace Koos__OBD_Communicator
         // global settings, to be moved!
         OBDDeviceCommunicator obd = new OBDDeviceCommunicator(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000"));
         ConfigurationData configData = new ConfigurationData();
+        FormulaEvaluation.Eval expressionParser = new FormulaEvaluation.Eval();
 
         // Constructor
         public MainPage()
@@ -111,10 +113,32 @@ namespace Koos__OBD_Communicator
             worker.RunWorkerAsync();
         }
 
-        private void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
+        public void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
         {
-            string message = e.mode.ToString("D2") + " " + e.PIDCode.ToString("D2") + " (" + e.length.ToString() + "): " + e.message;
-            updateStatus_async(message);
+            string message = e.mode.ToString("D2") + " " + e.PIDCode.ToString("D2") + " (" + e.length.ToString() + "): ";
+            string result = e.message;
+            var sensor = this.configData.GetSensor(e.mode, e.PIDCode);
+            if (sensor.formula != "" && sensor.highestFormulaCharacterNumber > e.length)
+                throw new Exception("Not all values are filled in the formula!");
+            else if (sensor.formula != "" && sensor.highestFormulaCharacterNumber <= e.length)
+            {
+                // vul formule in, A = byte 0, B = byte 1, C = byte 2, etc.
+                result = TranslateSensorValues(e.message, sensor);
+            }
+            
+            updateStatus_async(message + result);
+        }
+
+        private string TranslateSensorValues(string returnedMessage, PIDSensor sensor)
+        {
+            string completedFormula = sensor.formula;
+
+            for (int c = 0; c <= sensor.highestFormulaCharacterNumber; c++)
+            {
+                completedFormula = completedFormula.Replace(PIDSensor.alphabet[c].ToString(), int.Parse(returnedMessage.Substring(c * 2, 2), NumberStyles.HexNumber).ToString());
+            }
+
+            return this.expressionParser.Execute(completedFormula).ToString();
         }
 
         

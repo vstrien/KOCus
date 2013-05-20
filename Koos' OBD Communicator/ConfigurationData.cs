@@ -44,18 +44,28 @@ namespace Koos__OBD_Communicator
                     var s_formulaAttribute = PIDSensor.Attribute("Formula");
                     if (s_formulaAttribute == null)
                     {
-                        sensorLists[currentSensor].addPID(s_PID, s_bytes, s_description);
+                        sensorLists[currentSensor].AddPID(s_PID, s_bytes, s_description);
                     }
                     else
                     {
                         var s_formula = s_formulaAttribute.Value.ToString();
-                        sensorLists[currentSensor].addPID(s_PID, s_bytes, s_description, s_formula);
+                        sensorLists[currentSensor].AddPID(s_PID, s_bytes, s_description, s_formula);
                     }
                 }
 
                 currentSensor += 1;
             }
 
+        }
+
+        public PIDSensor GetSensor(int mode, int PID)
+        {
+            if (mode - 1 > sensorLists.Count())
+                throw new ArgumentOutOfRangeException("mode");
+            if (PID > sensorLists[mode - 1].PIDSensors.Count())
+                throw new ArgumentOutOfRangeException("PID");
+
+            return this.sensorLists[mode - 1].GetPID(PID);
         }
     }
 
@@ -84,7 +94,7 @@ namespace Koos__OBD_Communicator
                 int.Parse(lastPID, NumberStyles.HexNumber),
                 description) { }
 
-        public void addPID(int PID, int bytes, string description, string formula = "")
+        public void AddPID(int PID, int bytes, string description, string formula = "")
         {
             if (PID > lastPID || PID < firstPID)
             {
@@ -94,9 +104,14 @@ namespace Koos__OBD_Communicator
             this.PIDSensors[PID - firstPID] = new PIDSensor(mode, PID, bytes, this, description, formula);
         }
 
-        internal void addPID(string s_PID, string s_bytes, string s_description, string s_formula = "")
+        public PIDSensor GetPID(int requestPID)
         {
-            this.addPID(int.Parse(s_PID, NumberStyles.HexNumber),
+            return this.PIDSensors[requestPID - firstPID];
+        }
+
+        internal void AddPID(string s_PID, string s_bytes, string s_description, string s_formula = "")
+        {
+            this.AddPID(int.Parse(s_PID, NumberStyles.HexNumber),
                 int.Parse(s_bytes, NumberStyles.HexNumber),
                 s_description,
                 s_formula);
@@ -108,6 +123,9 @@ namespace Koos__OBD_Communicator
         public int mode, PID, bytes;
         public string description, formula;
         public SensorAvailability parent;
+        public char? highestFormulaCharacter;
+        public int highestFormulaCharacterNumber;
+        public static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
         public PIDSensor(int mode, int PID, int bytes, SensorAvailability parent, string description, string formula = "")
         {
@@ -115,8 +133,28 @@ namespace Koos__OBD_Communicator
             this.PID = PID;
             this.bytes = bytes;
             this.description = description;
-            this.formula = formula;
+            this.formula = formula.ToUpper();
             this.parent = parent;
+
+            this.highestFormulaCharacter = GetHighestFormulaCharacterFrom(formula);
+            if (this.highestFormulaCharacter == null)
+                this.highestFormulaCharacterNumber = 0;
+            else if (this.highestFormulaCharacter != null)
+            {
+                char character = (char)highestFormulaCharacter;
+                this.highestFormulaCharacterNumber = Array.IndexOf(alphabet, character, 0, 26);
+            }
+        }
+
+        private char? GetHighestFormulaCharacterFrom(string formula)
+        {
+            char? highestChar = null;
+            foreach (char character in alphabet)
+            {
+                if (formula.Contains(character))
+                    highestChar = character;
+            }
+            return highestChar;
         }
     }
 

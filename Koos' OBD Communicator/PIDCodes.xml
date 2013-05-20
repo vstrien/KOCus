@@ -6,13 +6,33 @@
       <PIDSensor PID="03" bytes="02" Description="Fuel system status" />
       <PIDSensor PID="04" bytes="01" Description="Calculated engine load value" Formula="A*100/255" />
       <PIDSensor PID="05" bytes="01" Description="Engine coolant temperature" Formula="A-40" />
-      <PIDSensor PID="0C" bytes="01" Description="Engine RPM" Formula="((A*256)+B)/4" />
+      <PIDSensor PID="0C" bytes="02" Description="Engine RPM" Formula="((A*256)+B)/4" />
     </AvailablePIDSensors>
   </SensorAvailability>
   <SensorAvailability Mode="01" PID="20" bytes="04" firstPID="21" lastPID="40" Description="PIDs supported [21 - 40]">
     <AvailablePIDSensors>
       <PIDSensor PID="2F" bytes="04" Description="Fuel level input" Formula="A*100/255" />
       <PIDSensor PID="33" bytes="01" Description="Barometric pressure" Formula="A" />
+    </AvailablePIDSensors>
+  </SensorAvailability>
+  <SensorAvailability Mode="01" PID="40" bytes="04" firstPID="41" lastPID="60" Description="PIDs supported [41 - 60]">
+    <AvailablePIDSensors>
+    </AvailablePIDSensors>
+  </SensorAvailability>
+  <SensorAvailability Mode="01" PID="60" bytes="04" firstPID="61" lastPID="80" Description="PIDs supported [61 - 80]">
+    <AvailablePIDSensors>
+    </AvailablePIDSensors>
+  </SensorAvailability>
+  <SensorAvailability Mode="01" PID="80" bytes="04" firstPID="81" lastPID="A0" Description="PIDs supported [81 - A0]">
+    <AvailablePIDSensors>
+    </AvailablePIDSensors>
+  </SensorAvailability>
+  <SensorAvailability Mode="01" PID="80" bytes="04" firstPID="A1" lastPID="C0" Description="PIDs supported [81 - A0]">
+    <AvailablePIDSensors>
+    </AvailablePIDSensors>
+  </SensorAvailability>
+  <SensorAvailability Mode="01" PID="80" bytes="04" firstPID="C1" lastPID="E0" Description="PIDs supported [81 - A0]">
+    <AvailablePIDSensors>
     </AvailablePIDSensors>
   </SensorAvailability>
 </PIDList>
