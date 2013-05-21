@@ -125,6 +125,7 @@
     </Content>
     <EmbeddedResource Include="PIDCodes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="README_FIRST.txt" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
@@ -149,6 +150,10 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommunicationProviders\CommunicationProviders.csproj">
+      <Project>{C5DFFD4E-E3DF-4C1B-9337-4D2452EF4238}</Project>
+      <Name>CommunicationProviders</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FormulaEvaluation\FormulaEvaluation.csproj">
       <Project>{6DB2FC9B-9FDC-4471-B6FB-E22804578730}</Project>
       <Name>FormulaEvaluation</Name>

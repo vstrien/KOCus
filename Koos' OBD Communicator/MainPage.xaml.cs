@@ -21,7 +21,7 @@ namespace Koos__OBD_Communicator
     public partial class MainPage : PhoneApplicationPage
     {
         // global settings, to be moved!
-        OBDDeviceCommunicator obd = new OBDDeviceCommunicator(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000"));
+        OBDDeviceCommunicator obd = new OBDDeviceCommunicator(new CommunicationProviders.SocketSync(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000")));
         ConfigurationData configData = new ConfigurationData();
         FormulaEvaluation.Eval expressionParser = new FormulaEvaluation.Eval();
 

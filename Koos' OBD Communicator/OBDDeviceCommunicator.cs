@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using CommunicationProviders;
 
 namespace Koos__OBD_Communicator
 {
@@ -15,250 +16,13 @@ namespace Koos__OBD_Communicator
         public event EventHandler<OBDSensorDataEventArgs> RaiseOBDSensorData;
         public event EventHandler<ResponseEventArgs> RaiseInitResponse;
         public event EventHandler<ResponseEventArgs> RaisePIDResponse;
-        #region socket communication
-        IPAddress hostaddress;
-        int port;
-        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        int MAX_BUFFER_SIZE = 4096;
+        ISocketSyncProvider socket;
 
-        public OBDDeviceCommunicator(IPAddress hostaddress, int port)
+        public OBDDeviceCommunicator(ISocketSyncProvider socket)
         {
-            this.hostaddress = hostaddress;
-            this.port = port;
+            this.socket = socket;
         }
 
-        private bool connect()
-        {
-            ManualResetEvent connectionDone = new ManualResetEvent(false);
-            bool connected = false;
-
-            if (socket.Connected) // already connected
-                return true;
-
-            
-            SocketAsyncEventArgs socketEventArgs = new SocketAsyncEventArgs()
-            {
-                RemoteEndPoint = new IPEndPoint(this.hostaddress, this.port)
-            };
-
-            socketEventArgs.Completed += (socketObject, eventArgs) =>
-            {
-                connected = eventArgs.SocketError == SocketError.Success;
-                connectionDone.Set();
-            };
-
-            connectionDone.Reset();
-            socket.ConnectAsync(socketEventArgs);
-            connectionDone.WaitOne();
-
-            return connected;
-        }
-
-        public void connectAndReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse)
-        {
-            connect();
-
-            ReceiveAsync(handleResponse);
-        }
-
-        public SocketError connectAndSendSync(string message)
-        {
-            SocketError result = SocketError.NotConnected;
-
-            connect();
-            ManualResetEvent sendDone = new ManualResetEvent(false);
-
-            SendAsync(message, (s, e) =>
-            {
-                result = e.SocketError;
-
-                sendDone.Set();
-            });
-            sendDone.Reset();
-            sendDone.WaitOne();
-
-            return result;
-        }
-
-
-        public string ReceiveUntilGtSync()
-        {
-            string response = "";
-            bool error = false;
-            ManualResetEvent receiveDone = new ManualResetEvent(false);
-
-            // receive all data from buffer.
-            // This achieved through polling the buffer until no response comes back
-            do
-            {
-                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs()
-                {
-                    RemoteEndPoint = socket.RemoteEndPoint,
-                    UserToken = null
-                };
-
-                socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
-                EventHandler<SocketAsyncEventArgs> read_complete_buffer = new EventHandler<SocketAsyncEventArgs>(delegate(object s4, SocketAsyncEventArgs e4)
-                {
-                    if (e4.SocketError == SocketError.Success)
-                    {
-                        response += Encoding.UTF8.GetString(e4.Buffer, e4.Offset, e4.BytesTransferred);
-                        response = response.Trim('\0', '\n', '\r', ' ');
-                    }
-                    else
-                    {
-                        error = true;
-                    }
-                    receiveDone.Set();
-                });
-
-                socketEventArg.Completed += read_complete_buffer;
-                receiveDone.Reset();
-
-                socket.ReceiveAsync(socketEventArg);
-                
-                receiveDone.WaitOne();
-
-            } while (!error && response.Length > 0 && response.Substring(response.Length - 1) != ">");
-
-            return response;
-        }
-
-        public string ReceiveSync()
-        {
-            string response = "";
-            ManualResetEvent receiveDone = new ManualResetEvent(false);
-
-            // receive all data from buffer.
-            // This achieved through polling the buffer until no response comes back
-            SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs()
-            {
-                RemoteEndPoint = socket.RemoteEndPoint,
-                UserToken = null
-            };
-
-            socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
-            EventHandler<SocketAsyncEventArgs> read_complete_buffer = new EventHandler<SocketAsyncEventArgs>(delegate(object socketObject, SocketAsyncEventArgs eventArgs)
-            {
-                if (eventArgs.SocketError == SocketError.Success)
-                {
-                    response += Encoding.UTF8.GetString(eventArgs.Buffer, eventArgs.Offset, eventArgs.BytesTransferred);
-                    response = response.Trim('\0', '\n', '\r');
-                }
-
-                receiveDone.Set();
-            });
-
-            socketEventArg.Completed += read_complete_buffer;
-            receiveDone.Reset();
-
-            socket.ReceiveAsync(socketEventArg);
-
-            receiveDone.WaitOne();
-
-            return response;
-        }
-
-        public string ReceiveAsync(int timeoutPerRead_ms = 100)
-        {
-
-            bool receivedNewData = false;
-            string response = "";
-
-            // receive all data from buffer.
-            // This achieved through polling the buffer until no response comes back
-            do
-            {
-                receivedNewData = false;
-
-                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs()
-                {
-                    RemoteEndPoint = socket.RemoteEndPoint,
-                    UserToken = null
-                };
-
-                socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
-                EventHandler<SocketAsyncEventArgs> read_complete_buffer = new EventHandler<SocketAsyncEventArgs>(delegate(object s4, SocketAsyncEventArgs e4)
-                {
-                    if (e4.SocketError == SocketError.Success)
-                    {
-                        response += Encoding.UTF8.GetString(e4.Buffer, e4.Offset, e4.BytesTransferred);
-                        response = response.Trim('\0');
-                        receivedNewData = true;
-                    }
-                });
-
-                socketEventArg.Completed += read_complete_buffer;
-
-                socket.ReceiveAsync(socketEventArg);
-
-                Thread.Sleep(timeoutPerRead_ms);
-
-            } while (receivedNewData);
-
-            return response;
-        }
-
-        public void ReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse)
-        {
-            // We are re-using the _socket object initialized in the Connect method
-            if (socket != null)
-            {
-                // Create SocketAsyncEventArgs context object
-                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs()
-                {
-                    RemoteEndPoint = socket.RemoteEndPoint,
-                    UserToken = null
-                };
-
-                socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
-
-                // Event handler for the Completed event.
-                socketEventArg.Completed += handleResponse;
-
-                socket.ReceiveAsync(socketEventArg);
-            }
-            else
-            {
-                throw new InvalidOperationException("socket not initialized!");
-            }
-        }
-
-        /// <summary>
-        /// Send the given data to the server using the established connection
-        /// </summary>
-        /// <param name="data">The data to send to the server</param>
-        /// <returns>The result of the Send request</returns>
-        public void SendAsync(string data, EventHandler<SocketAsyncEventArgs> handleResponse)
-        {
-            // We are re-using the _socket object initialized in the Connect method
-            if (socket != null)
-            {
-                // Create SocketAsyncEventArgs context object
-                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs()
-                {
-                    RemoteEndPoint = socket.RemoteEndPoint,
-                    UserToken = null
-                };
-
-                // Event handler for the Completed event.
-                socketEventArg.Completed += handleResponse;
-
-                // Add the data to be sent into the buffer
-                byte[] payload = Encoding.UTF8.GetBytes(data);
-                socketEventArg.SetBuffer(payload, 0, payload.Length);
-
-                // Make an asynchronous Send request over the socket
-                socket.SendAsync(socketEventArg);
-            }
-            else
-            {
-                throw new InvalidOperationException("socket not initialized!");
-            }
-        }
-        #endregion socket communication
-
-        #region high-level communication
         public PID.SupportedStatus isSupported(int mode, int nPID)
         {
             return this.PIDInformation.isSupported(mode, nPID);
@@ -271,44 +35,46 @@ namespace Koos__OBD_Communicator
             this.OnRaiseInitResponse(new ResponseEventArgs("Hello from init_communication!"));
 
             // connect
-            this.connect();
+            this.socket.ConnectSync();
             
             //empty pipeline
-            this.OnRaiseInitResponse(new ResponseEventArgs("Initial pipeline: " + this.ReceiveAsync(500)));
+            this.OnRaiseInitResponse(new ResponseEventArgs("Initial pipeline: " + this.socket.EmptyPipelineUntilNoResponseFor(500)));
 
             // reset device
-            //this.connectAndSendSync(vocabulary["RESET"]);
-            this.connectAndSendSync("AT Z\r");
-            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT Z: " + this.ReceiveUntilGtSync()));
+            //this.socket.SendSync(vocabulary["RESET"]);
+            this.socket.SendSync("AT Z\r");
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT Z: " + this.socket.ReceiveUntilLastCharacterIs('>')));
 
             // set line feed off
-            //this.connectAndSendSync(vocabulary["LF OFF"]);
-            //this.ReceiveUntilGtSync();
-            this.connectAndSendSync("AT L0\r");
-            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT L0: " + this.ReceiveUntilGtSync()));
+            //this.socket.SendSync(vocabulary["LF OFF"]);
+            //this.socket.ReceiveUntilLastCharacterIs('>');
+            this.socket.SendSync("AT L0\r");
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT L0: " + this.socket.ReceiveUntilLastCharacterIs('>')));
 
             // set headers on
-            //this.connectAndSendSync(vocabulary["HEADERS ON"]);
-            //this.ReceiveUntilGtSync();
-            this.connectAndSendSync("AT H1\r");
-            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT H1: " + this.ReceiveUntilGtSync()));
+            //this.socket.SendSync(vocabulary["HEADERS ON"]);
+            //this.socket.ReceiveUntilLastCharacterIs('>');
+            this.socket.SendSync("AT H1\r");
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT H1: " + this.socket.ReceiveUntilLastCharacterIs('>')));
 
             // set echo off
-            //this.connectAndSendSync(vocabulary["ECHO OFF"]);
-            //this.ReceiveUntilGtSync();
-            this.connectAndSendSync("AT E0\r");
-            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT E0: " + this.ReceiveUntilGtSync()));
+            //this.socket.SendSync(vocabulary["ECHO OFF"]);
+            //this.socket.ReceiveUntilLastCharacterIs('>');
+            this.socket.SendSync("AT E0\r");
+            this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT E0: " + this.socket.ReceiveUntilLastCharacterIs('>')));
 
             foreach (SensorAvailability SensorsToCheck in currentConfiguration.sensorLists)
             {
                 string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + "\r";
-                this.connectAndSendSync(message);
-                string supportedPIDs = this.ReceiveUntilGtSync();
+                this.OnRaiseInitResponse(new ResponseEventArgs("Sending: " + message));
+                this.socket.SendSync(message);
+                string supportedPIDs = this.socket.ReceiveUntilLastCharacterIs('>');
                 this.OnRaiseInitResponse(new ResponseEventArgs("[RR] " + message + ": " + supportedPIDs));
                 if (!this.PIDInformation.parseSupportedPIDs(SensorsToCheck.mode, SensorsToCheck.firstPID, SensorsToCheck.lastPID, supportedPIDs))
                     this.OnRaiseInitResponse(new ResponseEventArgs("Not recognized " + message + ": " + supportedPIDs));
                     ; // well, shit happens. For now, just skip.
             }
+            this.OnRaiseInitResponse(new ResponseEventArgs("Finished init."));
 
             return "Success";
         }
@@ -324,14 +90,14 @@ namespace Koos__OBD_Communicator
                     foreach (var currentSensor in AvailableSensors.PIDSensors)
                     {
                         // Alleen wanneer een PID ook daadwerkelijk beschikbaar & ondersteund is, mag deze uitgevraagd worden.
-                        if (this.PIDInformation.isSupported(currentSensor.mode, currentSensor.PID) == PID.SupportedStatus.Supported)
+                        if (currentSensor != null && this.PIDInformation.isSupported(currentSensor.mode, currentSensor.PID) == PID.SupportedStatus.Supported)
                         {
                             // PID is beschikbaar. Message opstellen om mee uit te vragen (bijv. "01 02\r")
                             string message = currentSensor.mode.ToString("D2") + " " + currentSensor.PID.ToString("D2") + "\r";
-                            this.connectAndSendSync(message);
+                            this.socket.SendSync(message);
 
                             // Wacht de volgende ">" af.
-                            string response = this.ReceiveUntilGtSync();
+                            string response = this.socket.ReceiveUntilLastCharacterIs('>');
                             if (Message.isValid(response) != Message.ResponseValidity.Valid)
                             {
                                 // Als we niets met het teruggekomen bericht aankunnen, kunnen we het voor nu overslaan.
@@ -348,8 +114,6 @@ namespace Koos__OBD_Communicator
                 }
             }
         }
-
-        #endregion high-level communication
 
         protected virtual void OnRaiseOBDSensorData(OBDSensorDataEventArgs eventArgs)
         {
