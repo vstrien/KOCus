@@ -9,7 +9,7 @@ using CommunicationProviders;
 
 namespace Koos__OBD_Communicator
 {
-    class OBDDeviceCommunicator
+    class OBDDeviceCommunicatorSync
     {
         public PID PIDInformation { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Koos__OBD_Communicator
         public event EventHandler<ResponseEventArgs> RaisePIDResponse;
         ISocketSyncProvider socket;
 
-        public OBDDeviceCommunicator(ISocketSyncProvider socket)
+        public OBDDeviceCommunicatorSync(ISocketSyncProvider socket)
         {
             this.socket = socket;
         }
