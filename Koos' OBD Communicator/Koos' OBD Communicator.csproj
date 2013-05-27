@@ -89,13 +89,16 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConfigurationData.cs" />
+    <Compile Include="OBDDeviceCommunicatorAsync.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Message.cs" />
-    <Compile Include="OBDDeviceCommunicator.cs" />
+    <Compile Include="OBDDeviceCommunicatorSync.cs" />
+    <Compile Include="OBDSensorDataEventArgs.cs" />
     <Compile Include="PID.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
