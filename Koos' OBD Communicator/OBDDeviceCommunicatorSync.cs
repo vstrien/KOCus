@@ -63,7 +63,7 @@ namespace Koos__OBD_Communicator
             this.socket.SendSync("AT E0\r");
             this.OnRaiseInitResponse(new ResponseEventArgs("[RI] AT E0: " + this.socket.ReceiveUntilLastCharacterIs('>')));
 
-            foreach (SensorAvailability SensorsToCheck in currentConfiguration.sensorLists)
+            foreach (SensorAvailability SensorsToCheck in currentConfiguration.sensorAvailabilityList)
             {
                 string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + "\r";
                 this.OnRaiseInitResponse(new ResponseEventArgs("Sending: " + message));
@@ -82,7 +82,7 @@ namespace Koos__OBD_Communicator
         // Haal voor alle beschikbare sensors waarden op
         public void getSensorValuesSync(ConfigurationData currentConfiguration)
         {
-            foreach (SensorAvailability AvailableSensors in currentConfiguration.sensorLists)
+            foreach (SensorAvailability AvailableSensors in currentConfiguration.sensorAvailabilityList)
             {
                 // Wanneer van een sensor-range (van 32 sensors) de beschikbaarheid onbekend is, is uitvragen / loopen zinloos.
                 if (this.PIDInformation.isSupported(AvailableSensors.mode, AvailableSensors.firstPID) != PID.SupportedStatus.Unknown)

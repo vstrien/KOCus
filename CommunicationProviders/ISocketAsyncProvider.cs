@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CommunicationProviders
 {
-    interface ISocketAsyncProvider : ISocketProvider
+    public interface ISocketAsyncProvider : ISocketProvider
     {
         void ConnectAsync(EventHandler<SocketAsyncEventArgs> onCompletion);
 

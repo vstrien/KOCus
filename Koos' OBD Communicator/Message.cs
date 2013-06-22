@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -57,5 +58,41 @@ namespace Koos__OBD_Communicator
 
             return cleanedResponse.Substring((cleanedResponse.Length - (getBytesInMessage(cleanedResponse) * 2)) + 4);
         }
+
+        public static ResponseDetails getMessageContentDetails(string checkedResponse)
+        {
+            string cleanedResponse = cleanReponse(checkedResponse);
+
+            ResponseDetails response = new ResponseDetails() {
+                bytes = getBytesInMessage(cleanedResponse),
+                mode = getModeOfMessage(cleanedResponse),
+                PID = getPIDOfMessage(cleanedResponse),
+                message = getMessageContents(cleanedResponse)
+            };
+
+            return response;
+        }
+
+        public static int getPIDOfMessage(string cleanedResponse)
+        {
+            // cleaned: "7E8064120A007B011"
+            // PID = byte 7, 2 tekens 20.
+            return int.Parse(cleanedResponse.Substring(7, 2), NumberStyles.HexNumber);
+        }
+
+        public static int getModeOfMessage(string cleanedResponse)
+        {
+            // cleaned: "7E8064120A007B011"
+            // Mode = byte 5, 2 tekens (41) - 40.
+            return int.Parse(cleanedResponse.Substring(5, 2), NumberStyles.HexNumber) - 0x40;
+        }
+    }
+
+    public struct ResponseDetails
+    {
+        public int bytes;
+        public int mode;
+        public int PID;
+        public string message;
     }
 }

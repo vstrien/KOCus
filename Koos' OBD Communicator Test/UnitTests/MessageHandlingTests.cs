@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Koos__OBD_Communicator;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +83,22 @@ namespace Koos__OBD_Communicator_Test
 
             Koos__OBD_Communicator.PID testPID = new Koos__OBD_Communicator.PID();
             Assert.IsTrue(testPID.parseSupportedPIDs(mode, 0x01, 0x20, returnMessage));
+        }
+
+        [TestMethod]
+        [Description("Test if PID sensor number is recognized correctly")]
+        public void TestDecoudingOfPID()
+        {
+            string returnMessage_cleansed = "7E8064120A007B011";
+            Assert.IsTrue(Message.getPIDOfMessage(returnMessage_cleansed) == 0x20);
+        }
+
+        [TestMethod]
+        [Description("Test if request mode is recognized correctly")]
+        public void TestDecoudingOfPID()
+        {
+            string returnMessage_cleansed = "7E8064120A007B011";
+            Assert.IsTrue(Message.getModeOfMessage(returnMessage_cleansed) == 0x01);
         }
 
         [TestMethod]

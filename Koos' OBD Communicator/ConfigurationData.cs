@@ -11,7 +11,7 @@ namespace Koos__OBD_Communicator
 {
     class ConfigurationData
     {
-        public SensorAvailability[] sensorLists;
+        public SensorAvailability[] sensorAvailabilityList;
 
         public ConfigurationData()
         {
@@ -21,7 +21,7 @@ namespace Koos__OBD_Communicator
             //{
             
             var PIDList = XElement.Load(this.GetType().Assembly.GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml"));
-            this.sensorLists = new SensorAvailability[PIDList.Elements().Count()];
+            this.sensorAvailabilityList = new SensorAvailability[PIDList.Elements().Count()];
             int currentSensor = 0;
 
             foreach (var availableSensors in PIDList.Elements())
@@ -32,7 +32,7 @@ namespace Koos__OBD_Communicator
                 var firstPID = availableSensors.Attribute("firstPID").Value.ToString();
                 var lastPID = availableSensors.Attribute("lastPID").Value.ToString();
                 var description = availableSensors.Attribute("Description").Value.ToString();
-                sensorLists[currentSensor] = new SensorAvailability(Mode, PID, bytes, firstPID, lastPID, description);
+                sensorAvailabilityList[currentSensor] = new SensorAvailability(Mode, PID, bytes, firstPID, lastPID, description);
 
                 var AvailablePIDSensors = availableSensors.Elements().First();
                 foreach (var PIDSensor in AvailablePIDSensors.Elements())
@@ -44,12 +44,12 @@ namespace Koos__OBD_Communicator
                     var s_formulaAttribute = PIDSensor.Attribute("Formula");
                     if (s_formulaAttribute == null)
                     {
-                        sensorLists[currentSensor].AddPID(s_PID, s_bytes, s_description);
+                        sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description);
                     }
                     else
                     {
                         var s_formula = s_formulaAttribute.Value.ToString();
-                        sensorLists[currentSensor].AddPID(s_PID, s_bytes, s_description, s_formula);
+                        sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description, s_formula);
                     }
                 }
 
@@ -60,12 +60,12 @@ namespace Koos__OBD_Communicator
 
         public PIDSensor GetSensor(int mode, int PID)
         {
-            if (mode - 1 > sensorLists.Count())
+            if (mode - 1 > sensorAvailabilityList.Count())
                 throw new ArgumentOutOfRangeException("mode");
-            if (PID > sensorLists[mode - 1].PIDSensors.Count())
+            if (PID > sensorAvailabilityList[mode - 1].PIDSensors.Count())
                 throw new ArgumentOutOfRangeException("PID");
 
-            return this.sensorLists[mode - 1].GetPID(PID);
+            return this.sensorAvailabilityList[mode - 1].GetPID(PID);
         }
     }
 

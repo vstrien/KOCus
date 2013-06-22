@@ -10,8 +10,6 @@ namespace CommunicationProviders
 {
     public class SocketSync : SocketAsync , ISocketSyncProvider
     {
-        IPAddress hostaddress;
-        int port;
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         int MAX_BUFFER_SIZE = 4096;
 
