@@ -6,165 +6,133 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Data;
 
 namespace Koos__OBD_Communicator
 {
     class ConfigurationData
     {
-        public SensorAvailability[] sensorAvailabilityList;
-
+        public Dictionary<int, PIDSensor> possibleSensors = new Dictionary<int, PIDSensor>();
         
-
+        /// <summary>
+        /// Reads XML file with PID configuration, and loads it into a PIDSensor data structure.
+        /// Parse XML PID codes
+        /// The XML file can be structured as follows:
+        ///  First level: &lt;PIDList&gt; element
+        ///   Second level: &lt;SensorAvailability Mode="xx"&gt; element (1 or more)
+        ///    Third level: &lt;PIDSensor elements&gt;
+        ///     Third+ level: &lt;PIDSensor elements&gt;
+        /// In any level n+1 where n &gt; 2, the direct parent PID described the availability of child PIDs.
+        /// &lt;PIDList&gt;
+        ///   &lt;SensorAvailability Mode="01"&gt;
+        ///     &lt;PIDSensor PID="00" bytes="04" firstPID="01" Description="PIDs supported [01 - 20]"&gt;
+        ///       &lt;PIDSensor PID="01" bytes="04" Description="Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)" /&gt;
+        ///       &lt;PIDSensor PID="20" bytes="04" firstPID="21" Description="PIDs supported [21 - 40]"&gt;
+        ///         &lt;PIDSensor PID="2F" bytes="04" Description="Fuel level input" Formula="A*100/255" /&gt;
+        ///         &lt;PIDSensor PID="33" bytes="01" Description="Barometric pressure" Formula="A" /&gt;
+        ///         &lt;PIDSensor PID="40" bytes="04" firstPID="41" Description="PIDs supported [41 - 60]"&gt;
+        ///           &lt;PIDSensor PID="46" bytes="01" Description="Ambient Air temperature" Formula="A-40" /&gt;
+        ///           &lt;PIDSensor PID="5C" bytes="01" Description="Engine Oil temperature" Formula="A-40" /&gt;
+        ///           &lt;PIDSensor PID="60" bytes="04" firstPID="61" Description="PIDs supported [61 - 80]"&gt;
+        ///             &lt;PIDSensor PID="61" bytes="01" Description="Driver's demand engine - percent torque" Formula="A-125" /&gt;
+        ///           &lt;/PIDSensor&gt;
+        ///         &lt;/PIDSensor&gt;
+        ///       &lt;/PIDSensor&gt;
+        ///     &lt;/PIDSensor&gt;
+        ///   &lt;/SensorAvailability&gt;
+        /// &lt;/PIDList&gt;
+        /// </summary>
         public ConfigurationData()
         {
-            // Verwerk XML PID codes
-            //using (Stream stream = this.GetType().Assembly.
-            //           GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml"))
-            //{
-            
+            // will contain the element on level 1: <PIDList>
             var PIDList = XElement.Load(this.GetType().Assembly.GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml"));
 
-            foreach (var availableSensors in PIDList.Elements())
+            // Inside <PIDList> live <SensorAvailability> nodes, so this loop will open all <sensorAvailability> tags one by one.
+            foreach (var possibleSensorList in PIDList.Elements())
             {
-                var Mode = availableSensors.Attribute("Mode").Value.ToString();
-                this.parseAvailableSensors(availableSensors, Mode);
+                // Parse the 'Mode' attribute from the <SensorAvailability> tag
+                var Mode = int.Parse(possibleSensorList.Attribute("Mode").Value.ToString());
+
+                // Get the element at the first level (a <PIDList> element which usually contains other elements)
+                var SensorAvailability = possibleSensorList.Elements().First();
+
+                // Start parsing the root element and all nodes beneath
+                possibleSensors.Add(Mode, this.parsePossibleSensorList(SensorAvailability, Mode));
+                // By default, all sensors are set to 'not available'. Set the rood node to 'available'.
+                possibleSensors.First().Value.isAvailable = true;
             }
+
+            // with the PID tree of possible PID's complete, let's fill in the availabiltiy
+        }
+
+        /// <summary>
+        /// Parse all elements inside a &lt;PIDSensor&gt;-element (level 3 or deeper)
+        /// </summary>
+        /// <param name="xmlNodes">XML element containing the tree of PIDSensor-data</param>
+        /// <param name="Mode">ELM mode in which this element resides.</param>
+        /// <returns></returns>
+        public PIDSensor parsePossibleSensorList(XElement xmlTree, int Mode, PIDSensor parent = null)
+        {
+            var PID = int.Parse(xmlTree.Attribute("PID").Value.ToString(), NumberStyles.HexNumber);
+            var bytes = int.Parse(xmlTree.Attribute("bytes").Value.ToString(), NumberStyles.HexNumber);
+            var description = xmlTree.Attribute("Description").Value.ToString();
             
+            // Formula attribute can be empty, so we first need to check it before parsing.
+            var s_formulaAttribute = xmlTree.Attribute("Formula");
+            PIDSensor currentSensor;
+            if (s_formulaAttribute == null)
+                currentSensor = new PIDSensor(Mode, PID, bytes, parent, description);
+            else
+                currentSensor = new PIDSensor(Mode, PID, bytes, parent, description, s_formulaAttribute.Value.ToString());
 
-        }
-
-        public PIDSensor parseAvailableSensors(XElement xmlNodes, int Mode)
-        {
-            return this.parseAvailableSensors(xmlNodes, Mode, new PIDSensor());
-        }
-
-        public PIDSensor parseAvailableSensors(XElement xmlNodes, int Mode, PIDSensor sensorObject)
-        {
-            var AvailablePIDSensors = availableSensors.Elements().First();
-            foreach (var PIDSensor in AvailablePIDSensors.Elements())W
+            if (xmlTree.HasElements)
             {
-                var PID = PIDSensor.Attribute("PID").Value.ToString();
-                var bytes = PIDSensor.Attribute("bytes").Value.ToString();
-                var description = PIDSensor.Attribute("Description").Value.ToString();
-                var firstPID = availableSensors.Attribute("firstPID").Value.ToString();
-                var lastPID = availableSensors.Attribute("lastPID").Value.ToString();
-                
-                var s_formulaAttribute = PIDSensor.Attribute("Formula");
-                if (s_formulaAttribute == null)
-                {
-                    sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description);
-                }
-                else
-                {
-                    var s_formula = s_formulaAttribute.Value.ToString();
-                    sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description, s_formula);
-                }
+                // The PID node has children, so it should have an indication what the id's of that children are.
+                currentSensor.firstPID = int.Parse(xmlTree.Attribute("firstPID").Value.ToString(), NumberStyles.HexNumber);
             }
+
+            foreach (var childNode in xmlTree.Elements())
+            {
+                currentSensor.PIDSensors.Add(parsePossibleSensorList(childNode, Mode, currentSensor));
+            }
+
+            return currentSensor;
+        }
+
+        public List<PIDSensor> availableSensors()
+        {
+            List<PIDSensor> returnList = new List<PIDSensor>();
+            foreach (KeyValuePair<int, PIDSensor> modePID in this.possibleSensors)
+            {
+                returnList.AddRange(modePID.Value.availableSensors());
+            }
+            return returnList;
         }
 
         public PIDSensor GetSensor(int mode, int PID)
         {
-            if (mode - 1 > sensorAvailabilityList.Count())
-                throw new ArgumentOutOfRangeException("mode");
-            if (PID > sensorAvailabilityList[mode - 1].PIDSensors.Count())
-                throw new ArgumentOutOfRangeException("PID");
-
-            return this.sensorAvailabilityList[mode - 1].GetPID(PID);
-        }
-    }
-
-    public class SensorAvailability
-    {
-        public int mode, PID, bytes, firstPID, lastPID;
-        public string description;
-        public PIDSensor[] PIDSensors;
-
-        public SensorAvailability(int mode, int PID, int bytes, int firstPID, int lastPID, string description)
-        {
-            this.mode = mode;
-            this.PID = PID;
-            this.bytes = bytes;
-            this.description = description;
-            this.firstPID = firstPID;
-            this.lastPID = lastPID;
-            this.PIDSensors = new PIDSensor[lastPID - firstPID];
-        }
-
-        public SensorAvailability(string mode, string PID, string bytes, string firstPID, string lastPID, string description) :
-            this(int.Parse(mode, NumberStyles.HexNumber),
-                int.Parse(PID, NumberStyles.HexNumber),
-                int.Parse(bytes, NumberStyles.HexNumber),
-                int.Parse(firstPID, NumberStyles.HexNumber),
-                int.Parse(lastPID, NumberStyles.HexNumber),
-                description) { }
-
-        public void AddPID(int PID, int bytes, string description, string formula = "")
-        {
-            if (PID > lastPID || PID < firstPID)
+            foreach(KeyValuePair<int, PIDSensor> modePID in this.possibleSensors)
             {
-                throw new ArgumentOutOfRangeException("PID is not in range of this SensorClass");
+                if (modePID.Key == mode)
+                {
+                    var queryResult = modePID.Value.GetPID(PID);
+                    if(queryResult == null)
+                        throw new ArgumentOutOfRangeException("PID");
+                    else
+                        return queryResult;
+                }
             }
 
-            this.PIDSensors[PID - firstPID] = new PIDSensor(mode, PID, bytes, this, description, formula);
+            throw new ArgumentOutOfRangeException("mode");
         }
 
-        public PIDSensor GetPID(int requestPID)
+        public void parseOBDResponse(string response)
         {
-            return this.PIDSensors[requestPID - firstPID];
+            this.possibleSensors.First().Value.parseResponse(response);
         }
-
-        internal void AddPID(string s_PID, string s_bytes, string s_description, string s_formula = "")
-        {
-            this.AddPID(int.Parse(s_PID, NumberStyles.HexNumber),
-                int.Parse(s_bytes, NumberStyles.HexNumber),
-                s_description,
-                s_formula);
-        }
+    
     }
 
-    public class PIDSensor
-    {
-        public int mode, PID, bytes;
-        public string description, formula;
-        public PIDSensor parent;
-        public char? highestFormulaCharacter;
-        public int highestFormulaCharacterNumber;
-        public static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-        public int firstPID, lastPID;
-        public PIDSensor[] PIDSensors;
-
-        public PIDSensor();
-
-        public PIDSensor(int mode, int PID, int bytes, PIDSensor parent, string description, string formula = "")
-        {
-            this.mode = mode;
-            this.PID = PID;
-            this.bytes = bytes;
-            this.description = description;
-            this.formula = formula.ToUpper();
-            this.parent = parent;
-
-            this.highestFormulaCharacter = GetHighestFormulaCharacterFrom(formula);
-            if (this.highestFormulaCharacter == null)
-                this.highestFormulaCharacterNumber = 0;
-            else if (this.highestFormulaCharacter != null)
-            {
-                char character = (char)highestFormulaCharacter;
-                this.highestFormulaCharacterNumber = Array.IndexOf(alphabet, character, 0, 26);
-            }
-        }
-
-        private char? GetHighestFormulaCharacterFrom(string formula)
-        {
-            char? highestChar = null;
-            foreach (char character in alphabet)
-            {
-                if (formula.Contains(character))
-                    highestChar = character;
-            }
-            return highestChar;
-        }
-    }
 
     //class RequestCodes
     //{

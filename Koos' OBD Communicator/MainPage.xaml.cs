@@ -15,71 +15,62 @@ using System.Text;
 using Microsoft.Phone.Controls;
 using System.ComponentModel;
 using System.Globalization;
+using System.Windows.Threading;
 
 namespace Koos__OBD_Communicator
 {
     public partial class MainPage : PhoneApplicationPage
     {
         // global settings, to be moved!
-        OBDDeviceCommunicatorSync obd = new OBDDeviceCommunicatorSync(new CommunicationProviders.SocketSync(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000")));
-        ConfigurationData configData = new ConfigurationData();
-        FormulaEvaluation.Eval expressionParser = new FormulaEvaluation.Eval();
+        ConfigurationData configData;
+        OBDDeviceCommunicatorAsync obd;
+        DateTime lastSeen = DateTime.MinValue;
 
         // Constructor
         public MainPage()
         {
             InitializeComponent();
+            configData = new ConfigurationData();
+            obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000")), configData);
+            
             PIDRequestButton.Tap += PIDRequestButton_Tap;
-            InitButton.Tap += InitButton_Tap;
+
+            foreach (var sensor in this.configData.possibleSensors)
+                sensor.Value.RaiseOBDSensorData += obd_newOBDSensorData;
+            DispatcherTimer requestNewPIDs = new DispatcherTimer();
+            requestNewPIDs.Interval = TimeSpan.FromSeconds(1);
+            requestNewPIDs.Tick += requestNewPIDs_Tick;
+
+            this.obd.RaisePIDResponse += obd_RaiseResponse;
+            this.obd.RaisePIDResponse += obd_updateTimer;
         }
 
-        void InitButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
+        void requestNewPIDs_Tick(object sender, EventArgs e)
         {
-            updateStatus_async("Initializing..");
-            
             BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, eventArgs) =>
-            {
-                this.obd.RaiseInitResponse += obd_RaiseResponse;
                 
-                string result = this.obd.init_communication(this.configData);
-                if (result == "Success")
+            if (lastSeen.AddSeconds(10) < DateTime.Now)
+            {
+                // 10 seconds without response. Re-init.
+                updateStatus_async("Initializing..");
+
+                worker.DoWork += (s, eventArgs) =>
                 {
-                    updateStatus_async("Init successful.");
-                    int supported = 0;
-                    int mentioned = 0;
-                    for (int mode = 0; mode < this.obd.PIDInformation.supportedPIDs.Length; mode++)
-                    {
-                        for (int PID = 0; PID < this.obd.PIDInformation.supportedPIDs[mode].Length; PID++)
-                        {
-                            switch(this.obd.PIDInformation.supportedPIDs[mode][PID]) {
-                                case Koos__OBD_Communicator.PID.SupportedStatus.Supported:
-                                    supported++;
-                                    mentioned++;
-                                    break;
-                                case Koos__OBD_Communicator.PID.SupportedStatus.Unsupported:
-                                    mentioned++;
-                                    break;
-                            }
-                        }
-                    }
-                    updateStatus_async("Mentioned: " + mentioned.ToString());
-                    updateStatus_async("Supported: " + supported.ToString());
-                }
-                else
+                    obd.init_communication();
+                };
+            }
+            else
+            {
+                updateStatus_async("Requesting new sensors..");
+
+                worker.DoWork += (s, eventArgs) =>
                 {
-                    updateStatus_async("Init failed.");
-                    updateStatus_async(result);
-                }
-                this.obd.RaiseInitResponse -= obd_RaiseResponse;
-            };
+                    obd.checkSensorsAsync();
+                };
+            }
             worker.RunWorkerAsync();
         }
 
-        void obd_RaiseResponse(object sender, ResponseEventArgs e)
-        {
-            updateStatus_async(e.message);
-        }
 
         void updateStatus_async(string newStatus)
         {
@@ -102,46 +93,28 @@ namespace Koos__OBD_Communicator
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += (sender, eventArgs) =>
             {
-                this.obd.RaiseOBDSensorData += obd_newOBDSensorData;
-                this.obd.RaisePIDResponse += obd_RaiseResponse;
                 updateStatus_async("Getting values...");
-                this.obd.getSensorValuesSync(this.configData);
+                
                 updateStatus_async("Finished getting PID values.");
-                this.obd.RaiseOBDSensorData -= obd_newOBDSensorData;
-                this.obd.RaisePIDResponse -= obd_RaiseResponse;
             };
             worker.RunWorkerAsync();
         }
 
         public void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
         {
-            string message = e.mode.ToString("D2") + " " + e.PIDCode.ToString("D2") + " (" + e.length.ToString() + "): ";
-            string result = e.message;
-            var sensor = this.configData.GetSensor(e.mode, e.PIDCode);
-            if (sensor.formula != "" && sensor.highestFormulaCharacterNumber > e.length)
-                throw new Exception("Not all values are filled in the formula!");
-            else if (sensor.formula != "" && sensor.highestFormulaCharacterNumber <= e.length)
-            {
-                // vul formule in, A = byte 0, B = byte 1, C = byte 2, etc.
-                result = TranslateSensorValues(e.message, sensor);
-            }
+            // what to do when new sensor data arrives
             
-            updateStatus_async(message + result);
+            updateStatus_async(e.message);
         }
 
-        private string TranslateSensorValues(string returnedMessage, PIDSensor sensor)
+        void obd_RaiseResponse(object sender, ResponseEventArgs e)
         {
-            string completedFormula = sensor.formula;
-
-            for (int c = 0; c <= sensor.highestFormulaCharacterNumber; c++)
-            {
-                completedFormula = completedFormula.Replace(PIDSensor.alphabet[c].ToString(), int.Parse(returnedMessage.Substring(c * 2, 2), NumberStyles.HexNumber).ToString());
-            }
-
-            return this.expressionParser.Execute(completedFormula).ToString();
+            updateStatus_async(e.message);
         }
 
-        
-
+        private void obd_updateTimer(object sender, ResponseEventArgs e)
+        {
+            this.lastSeen = DateTime.Now;
+        }
     }
 }

@@ -94,9 +94,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Message.cs" />
-    <Compile Include="OBDDeviceCommunicatorSync.cs" />
     <Compile Include="OBDSensorDataEventArgs.cs" />
     <Compile Include="PID.cs" />
+    <Compile Include="PIDSensor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseEventArgs.cs" />
   </ItemGroup>
@@ -140,6 +140,7 @@
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
     <EmbeddedResource Include="PIDCodes_complete.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RequestCodes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

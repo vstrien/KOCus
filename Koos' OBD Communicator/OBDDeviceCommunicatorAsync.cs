@@ -13,8 +13,6 @@ namespace Koos__OBD_Communicator
     {
         public PID PIDInformation { get; private set; }
 
-        public event EventHandler<OBDSensorDataEventArgs> RaiseOBDSensorData;
-        public event EventHandler<ResponseEventArgs> RaiseInitResponse;
         public event EventHandler<ResponseEventArgs> RaisePIDResponse;
         public ConfigurationData configuration { get; set; }
         ISocketAsyncProvider socket;
@@ -59,9 +57,14 @@ namespace Koos__OBD_Communicator
             });
         }
         
+        /// <summary>
+        /// For all available sensors (all sensors that we can handle, and are indicated by the car as 'available'):
+        /// Send out a request for new values
+        /// </summary>
         public void checkSensorsAsync()
         {    
-            foreach (SensorAvailability SensorsToCheck in this.configuration.sensorAvailabilityList)
+            var availableSensors = this.configuration.availableSensors();
+            foreach (PIDSensor SensorsToCheck in availableSensors)
             {
                 string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + "\r";
 
@@ -69,31 +72,9 @@ namespace Koos__OBD_Communicator
             }
         }
 
-        // Haal voor alle beschikbare sensors waarden op
-        public void getSensorValuesAsync()
-        {
-            /* TODO: Op dit moment is er een lijst met beschikbare sensors. Dat voldoet niet aan de werkelijkheid, waar de lijst een boomstructuur is.
-             * Dit moet aangepast worden, zodat het uitvragen van elke sensor identiek gebeurt.
-             */
-            foreach (SensorAvailability AvailableSensors in this.configuration.sensorAvailabilityList)
-            {
-                // Wanneer van een sensor-range (van 32 sensors) de beschikbaarheid onbekend is, is uitvragen / loopen zinloos.
-                if (this.PIDInformation.isSupported(AvailableSensors.mode, AvailableSensors.firstPID) != PID.SupportedStatus.Unknown)
-                {
-                    foreach (var currentSensor in AvailableSensors.PIDSensors)
-                    {
-                        // Alleen wanneer een PID ook daadwerkelijk beschikbaar & ondersteund is, mag deze uitgevraagd worden.
-                        if (currentSensor != null && this.PIDInformation.isSupported(currentSensor.mode, currentSensor.PID) == PID.SupportedStatus.Supported)
-                        {
-                            // PID is beschikbaar. Message opstellen om mee uit te vragen (bijv. "01 02\r")
-                            string message = currentSensor.mode.ToString("D2") + " " + currentSensor.PID.ToString("D2") + "\r";
-                            this.socket.SendAsync(message, null);
-                        }
-                    }
-                }
-            }
-        }
-
+        /// <summary>
+        /// Receives async messages from the OBD system, sends them to the configuration's parser
+        /// </summary>
         public void getAndHandleResponse()
         {
             this.socket.ReceiveAsync((s, eventArgs) =>
@@ -107,39 +88,15 @@ namespace Koos__OBD_Communicator
                 if (Message.isValid(response) != Message.ResponseValidity.Valid)
                     return;
 
-                string cleanedResponse = Message.cleanReponse(response);
+                this.configuration.parseOBDResponse(response);
 
-                // get PID from message
-                int PID = Message.getPIDOfMessage(cleanedResponse);
-
-                /* TODO: 
-                 * This (the split check between a sensor availability message and a sensor value message) is not a nice implementation. 
-                 * In essence, every PID message is the same, and should be handled with a class that conforms to an interface.
-                 */
-
-                // Check: is this  a sensor availability message?
-                var available = this.configuration.sensorAvailabilityList.Where(sensorAvail => (sensorAvail.PID == PID));
-                if (available.Count() > 0)
-                {
-                    // It's a sensor availability message
-                    var sensor = available.First();
-
-                    this.PIDInformation.parseSupportedPIDs(sensor.mode, sensor.firstPID, sensor.lastPID, response);
-                }
-                else
-                {
-                    // It's a sensor value message
-                    
-                    // Retrieve mode, PID, bytes:
-
-                    OnRaiseOBDSensorData(
-                        new OBDSensorDataEventArgs(
-                            Message.getModeOfMessage(cleanedResponse), 
-                            PID, 
-                            Message.getBytesInMessage(cleanedResponse), 
-                            Message.getMessageContents(cleanedResponse))
-                    );
-                }
+                //OnRaiseOBDSensorData(
+                //        new OBDSensorDataEventArgs(
+                //            Message.getModeOfMessage(cleanedResponse), 
+                //            PID, 
+                //            Message.getBytesInMessage(cleanedResponse), 
+                //            Message.getMessageContents(cleanedResponse))
+                //    );
             });
         }
 
@@ -154,16 +111,7 @@ namespace Koos__OBD_Communicator
             }
         }
 
-        protected virtual void OnRaiseOBDSensorData(OBDSensorDataEventArgs eventArgs)
-        {
-            EventHandler<OBDSensorDataEventArgs> handler = RaiseOBDSensorData;
 
-            // Only execute if there are any subscribers
-            if (handler != null)
-            {
-                handler(this, eventArgs);
-            }
-        }
     }
 
 }
