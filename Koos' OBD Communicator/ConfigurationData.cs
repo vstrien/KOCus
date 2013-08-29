@@ -13,6 +13,8 @@ namespace Koos__OBD_Communicator
     {
         public SensorAvailability[] sensorAvailabilityList;
 
+        
+
         public ConfigurationData()
         {
             // Verwerk XML PID codes
@@ -21,41 +23,43 @@ namespace Koos__OBD_Communicator
             //{
             
             var PIDList = XElement.Load(this.GetType().Assembly.GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml"));
-            this.sensorAvailabilityList = new SensorAvailability[PIDList.Elements().Count()];
-            int currentSensor = 0;
 
             foreach (var availableSensors in PIDList.Elements())
             {
                 var Mode = availableSensors.Attribute("Mode").Value.ToString();
-                var PID = availableSensors.Attribute("PID").Value.ToString();
-                var bytes = availableSensors.Attribute("bytes").Value.ToString();
+                this.parseAvailableSensors(availableSensors, Mode);
+            }
+            
+
+        }
+
+        public PIDSensor parseAvailableSensors(XElement xmlNodes, int Mode)
+        {
+            return this.parseAvailableSensors(xmlNodes, Mode, new PIDSensor());
+        }
+
+        public PIDSensor parseAvailableSensors(XElement xmlNodes, int Mode, PIDSensor sensorObject)
+        {
+            var AvailablePIDSensors = availableSensors.Elements().First();
+            foreach (var PIDSensor in AvailablePIDSensors.Elements())W
+            {
+                var PID = PIDSensor.Attribute("PID").Value.ToString();
+                var bytes = PIDSensor.Attribute("bytes").Value.ToString();
+                var description = PIDSensor.Attribute("Description").Value.ToString();
                 var firstPID = availableSensors.Attribute("firstPID").Value.ToString();
                 var lastPID = availableSensors.Attribute("lastPID").Value.ToString();
-                var description = availableSensors.Attribute("Description").Value.ToString();
-                sensorAvailabilityList[currentSensor] = new SensorAvailability(Mode, PID, bytes, firstPID, lastPID, description);
-
-                var AvailablePIDSensors = availableSensors.Elements().First();
-                foreach (var PIDSensor in AvailablePIDSensors.Elements())
+                
+                var s_formulaAttribute = PIDSensor.Attribute("Formula");
+                if (s_formulaAttribute == null)
                 {
-                    var s_PID = PIDSensor.Attribute("PID").Value.ToString();
-                    var s_bytes = PIDSensor.Attribute("bytes").Value.ToString();
-                    var s_description = PIDSensor.Attribute("Description").Value.ToString();
-                    
-                    var s_formulaAttribute = PIDSensor.Attribute("Formula");
-                    if (s_formulaAttribute == null)
-                    {
-                        sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description);
-                    }
-                    else
-                    {
-                        var s_formula = s_formulaAttribute.Value.ToString();
-                        sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description, s_formula);
-                    }
+                    sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description);
                 }
-
-                currentSensor += 1;
+                else
+                {
+                    var s_formula = s_formulaAttribute.Value.ToString();
+                    sensorAvailabilityList[currentSensor].AddPID(s_PID, s_bytes, s_description, s_formula);
+                }
             }
-
         }
 
         public PIDSensor GetSensor(int mode, int PID)
@@ -122,12 +126,16 @@ namespace Koos__OBD_Communicator
     {
         public int mode, PID, bytes;
         public string description, formula;
-        public SensorAvailability parent;
+        public PIDSensor parent;
         public char? highestFormulaCharacter;
         public int highestFormulaCharacterNumber;
         public static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+        public int firstPID, lastPID;
+        public PIDSensor[] PIDSensors;
 
-        public PIDSensor(int mode, int PID, int bytes, SensorAvailability parent, string description, string formula = "")
+        public PIDSensor();
+
+        public PIDSensor(int mode, int PID, int bytes, PIDSensor parent, string description, string formula = "")
         {
             this.mode = mode;
             this.PID = PID;
