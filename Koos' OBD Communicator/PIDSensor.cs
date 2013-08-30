@@ -194,18 +194,24 @@ namespace Koos__OBD_Communicator
         {
             // If this PID is an 'availability' PID, it should have a 'start' number of the first PID available here.
             ulong u_startPID = (ulong)this.firstPID;
-            ulong u_endPID = u_startPID + 32;
+            ulong u_endPID = u_startPID + 31;
 
             UInt64 nHex = UInt64.Parse(supportedSensors, NumberStyles.HexNumber);
             for (ulong currentPID_absolute = u_startPID; currentPID_absolute <= u_endPID; currentPID_absolute++)
             {
                 ulong currentPID_relative = u_endPID - currentPID_absolute;
+                //ulong currentPID_relative = u_startPID - currentPID_absolute;
                 ulong currentPID_bit = (ulong)Math.Pow(2, currentPID_relative);
 
-                if ((nHex & currentPID_bit) == currentPID_bit)
-                    this.PIDSensors.Where(sensor => ((ulong)sensor.PID == currentPID_absolute)).FirstOrDefault().isAvailable = true;
-                else
-                    this.PIDSensors.Where(sensor => ((ulong)sensor.PID == currentPID_absolute)).FirstOrDefault().isAvailable = false;
+                var result = this.PIDSensors.Where(sensor => ((ulong)sensor.PID == currentPID_absolute));
+                if ((nHex & currentPID_bit) == currentPID_bit && result.Count() == 1)
+                {
+                    result.First().isAvailable = true;
+                }
+                else if (result.Count() == 1)
+                {
+                    result.First().isAvailable = false;
+                }
             }
         }
 

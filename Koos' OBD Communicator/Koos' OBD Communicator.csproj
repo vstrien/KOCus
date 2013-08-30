@@ -95,7 +95,6 @@
     </Compile>
     <Compile Include="Message.cs" />
     <Compile Include="OBDSensorDataEventArgs.cs" />
-    <Compile Include="PID.cs" />
     <Compile Include="PIDSensor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseEventArgs.cs" />

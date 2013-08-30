@@ -11,7 +11,6 @@ namespace Koos__OBD_Communicator
 {
     class OBDDeviceCommunicatorAsync
     {
-        public PID PIDInformation { get; private set; }
 
         public event EventHandler<ResponseEventArgs> RaisePIDResponse;
         public ConfigurationData configuration { get; set; }
@@ -23,15 +22,8 @@ namespace Koos__OBD_Communicator
             this.configuration = currentConfiguration;
         }
 
-        public PID.SupportedStatus isSupported(int mode, int nPID)
-        {
-            return this.PIDInformation.isSupported(mode, nPID);
-        }
-
         public void init_communication()
         {
-            this.PIDInformation = new PID();
-
             // connect
             this.socket.ConnectAsync((s, e) =>
             {

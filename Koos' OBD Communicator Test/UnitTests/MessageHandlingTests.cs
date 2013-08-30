@@ -2,28 +2,16 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Koos__OBD_Communicator_Test
 {
     [TestClass]
     public class MessageHandlingTests
     {
-        [TestMethod]
-        [Description("Test if PID communication class initially has no information about the availability of PIDs")]
-        public void TestInitPIDClass()
-        {
-            Koos__OBD_Communicator.PID testPID = new Koos__OBD_Communicator.PID();
-            for (int mode = 0; mode < Koos__OBD_Communicator.PID.defaultNumberOfModes; mode++)
-            {
-                for (int nPID = 0; nPID < Koos__OBD_Communicator.PID.defaultNumberOfPIDsPerMode; nPID++)
-                {
-                    Assert.IsTrue(testPID.isSupported(mode + 1, nPID) == Koos__OBD_Communicator.PID.SupportedStatus.Unknown);
-                }
-            }
-        }
-
         [TestMethod]
         [Description("Test if return message cleansed the right way")]
         public void TestCleansingOfReturnMessage()
@@ -80,9 +68,9 @@ namespace Koos__OBD_Communicator_Test
             int pid = 00;
             string returnMessage = "7E8 06 41 00 BE 3F A8 11 \r\n\r\n>";
 
+            PIDSensor testPID = new PIDSensor(mode, pid, 2, null, "no desc");
 
-            Koos__OBD_Communicator.PID testPID = new Koos__OBD_Communicator.PID();
-            Assert.IsTrue(testPID.parseSupportedPIDs(mode, 0x01, 0x20, returnMessage));
+            testPID.parseResponse(returnMessage);
         }
 
         [TestMethod]
@@ -105,25 +93,45 @@ namespace Koos__OBD_Communicator_Test
         [Description("Test if valid return message with PID sensors is decoded correctly")]
         public void TestDecodingOfReturnMessage()
         {
-            string returnMessage_cleansed = "7E8064120A007B011";
-
             bool[] supported_shouldbe = new bool[] { true, false, true, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, true, true, false, false, false, false, false, false, false, true, false, false, false, true };
             int firstPID = 0x21;
             int lastPID = 0x40;
             int mode = 1;
+            int base_pid = 0x20;
+            
+            string returnMessage_cleansed = "7E8064120A007B011";
 
-            Koos__OBD_Communicator.PID testPID = new Koos__OBD_Communicator.PID();
-            Assert.IsTrue(testPID.parseSupportedPIDs(mode, firstPID, lastPID, returnMessage_cleansed));
+            string PID00 = "    <PIDSensor PID=\"" + base_pid.ToString("X") + "\" bytes=\"04\" firstPID=\"" + firstPID.ToString("X") + "\" Description=\"PIDs supported [01 - 20]\">\r\n";
+            for (int nPID = firstPID; nPID <= lastPID; nPID++)
+            {
+                PID00 += "      <PIDSensor PID=\"" + nPID.ToString("X") + "\" bytes=\"02\" Description=\"Testje\" Formula=\"((A*256)+B) / 100\" />\r\n";
+            }
+            PID00 += "    </PIDSensor>\r\n";
+            string xmlSource = "<PIDList>\r\n  <SensorAvailability Mode=\"01\">\r\n" + PID00 + "  </SensorAvailability>\r\n</PIDList>";
+
+            var configTest = new ConfigurationData(XElement.Parse(xmlSource, LoadOptions.None));
+
+            configTest.parseOBDResponse(returnMessage_cleansed);
+
+            var availableSensors = configTest.availableSensors();
 
             for(int nPID = firstPID; nPID <= lastPID; nPID++)
             {
+                var currentSensor = configTest.GetSensor(mode, nPID);
                 if(supported_shouldbe[nPID - firstPID])
                 {
-                    Assert.IsTrue(testPID.isSupported(mode, nPID) == Koos__OBD_Communicator.PID.SupportedStatus.Supported);
+                    // First, the availability on the sensor should be set to true
+                    Assert.IsTrue(currentSensor.isAvailable);
+                    // Secondly, the sensor should show up in the availability list
+                    Assert.IsTrue(availableSensors.Contains(currentSensor));
                 }
                 else
                 {
-                    Assert.IsTrue(testPID.isSupported(mode, nPID) == Koos__OBD_Communicator.PID.SupportedStatus.Unsupported);
+                    // First, the availability on the sensor should be set to false
+                    Assert.IsFalse(currentSensor.isAvailable);
+
+                    // Secondly, the sensor should not show up in the availability list
+                    Assert.IsFalse(availableSensors.Contains(currentSensor));
                 }
             }
         }
