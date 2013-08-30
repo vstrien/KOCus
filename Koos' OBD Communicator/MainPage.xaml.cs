@@ -21,7 +21,6 @@ namespace Koos__OBD_Communicator
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        // global settings, to be moved!
         ConfigurationData configData;
         OBDDeviceCommunicatorAsync obd;
         DateTime lastSeen = DateTime.MinValue;
@@ -35,12 +34,13 @@ namespace Koos__OBD_Communicator
             
             PIDRequestButton.Tap += PIDRequestButton_Tap;
 
-            foreach (var sensor in this.configData.possibleSensors)
-                sensor.Value.RaiseOBDSensorData += obd_newOBDSensorData;
+            // Every second, request new sensor values or re-initialize (if no response for 10 seconds)
             DispatcherTimer requestNewPIDs = new DispatcherTimer();
             requestNewPIDs.Interval = TimeSpan.FromSeconds(1);
             requestNewPIDs.Tick += requestNewPIDs_Tick;
 
+            // subscribe to events
+            configData.RaiseOBDSensorData += obd_newOBDSensorData;
             this.obd.RaisePIDResponse += obd_RaiseResponse;
             this.obd.RaisePIDResponse += obd_updateTimer;
         }
@@ -68,6 +68,11 @@ namespace Koos__OBD_Communicator
                     obd.checkSensorsAsync();
                 };
             }
+            //For future:
+            //worker.DoWork += (s, eventArgs) =>
+            //{
+            //    obd.getAndHandleResponse();
+            //};
             worker.RunWorkerAsync();
         }
 
@@ -94,7 +99,7 @@ namespace Koos__OBD_Communicator
             worker.DoWork += (sender, eventArgs) =>
             {
                 updateStatus_async("Getting values...");
-                
+                this.obd.getAndHandleResponse();
                 updateStatus_async("Finished getting PID values.");
             };
             worker.RunWorkerAsync();

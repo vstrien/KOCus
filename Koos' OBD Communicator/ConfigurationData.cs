@@ -14,7 +14,18 @@ namespace Koos__OBD_Communicator
     public class ConfigurationData
     {
         public Dictionary<int, PIDSensor> possibleSensors = new Dictionary<int, PIDSensor>();
-        
+        public event EventHandler<OBDSensorDataEventArgs> RaiseOBDSensorData;
+
+        private void OnRaiseOBDSensorData(object sender, OBDSensorDataEventArgs e)
+        {
+            EventHandler<OBDSensorDataEventArgs> handler = RaiseOBDSensorData;
+
+            // Only execute if there are any subscribers
+            if (handler != null)
+            {
+                handler(sender, e);
+            }
+        }
         
         public ConfigurationData() : this(XElement.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml")))
         {   
@@ -97,6 +108,9 @@ namespace Koos__OBD_Communicator
             {
                 currentSensor.PIDSensors.Add(parsePossibleSensorList(childNode, Mode, currentSensor));
             }
+
+            // subscribe to the current sensor
+            currentSensor.RaiseOBDSensorData += OnRaiseOBDSensorData;
 
             return currentSensor;
         }

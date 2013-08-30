@@ -200,7 +200,6 @@ namespace Koos__OBD_Communicator
             for (ulong currentPID_absolute = u_startPID; currentPID_absolute <= u_endPID; currentPID_absolute++)
             {
                 ulong currentPID_relative = u_endPID - currentPID_absolute;
-                //ulong currentPID_relative = u_startPID - currentPID_absolute;
                 ulong currentPID_bit = (ulong)Math.Pow(2, currentPID_relative);
 
                 var result = this.PIDSensors.Where(sensor => ((ulong)sensor.PID == currentPID_absolute));
