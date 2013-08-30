@@ -7,13 +7,19 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Data;
+using System.Reflection;
 
 namespace Koos__OBD_Communicator
 {
-    class ConfigurationData
+    public class ConfigurationData
     {
         public Dictionary<int, PIDSensor> possibleSensors = new Dictionary<int, PIDSensor>();
         
+        
+        public ConfigurationData() : this(XElement.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml")))
+        {   
+        }
+
         /// <summary>
         /// Reads XML file with PID configuration, and loads it into a PIDSensor data structure.
         /// Parse XML PID codes
@@ -42,11 +48,9 @@ namespace Koos__OBD_Communicator
         ///   &lt;/SensorAvailability&gt;
         /// &lt;/PIDList&gt;
         /// </summary>
-        public ConfigurationData()
+        /// <param name="PIDList">Contents of XML configuration file</param>
+        public ConfigurationData(XElement PIDList)
         {
-            // will contain the element on level 1: <PIDList>
-            var PIDList = XElement.Load(this.GetType().Assembly.GetManifestResourceStream("Koos__OBD_Communicator.PIDCodes.xml"));
-
             // Inside <PIDList> live <SensorAvailability> nodes, so this loop will open all <sensorAvailability> tags one by one.
             foreach (var possibleSensorList in PIDList.Elements())
             {
@@ -61,8 +65,6 @@ namespace Koos__OBD_Communicator
                 // By default, all sensors are set to 'not available'. Set the rood node to 'available'.
                 possibleSensors.First().Value.isAvailable = true;
             }
-
-            // with the PID tree of possible PID's complete, let's fill in the availabiltiy
         }
 
         /// <summary>
