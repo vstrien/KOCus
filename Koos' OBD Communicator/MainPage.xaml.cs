@@ -24,6 +24,8 @@ namespace Koos__OBD_Communicator
         ConfigurationData configData;
         OBDDeviceCommunicatorAsync obd;
         DateTime lastSeen = DateTime.MinValue;
+        Dictionary<int, ListBoxItem> DisplayItems = new Dictionary<int,ListBoxItem>();
+        Dictionary<int, TextBlock> DisplayValues = new Dictionary<int,TextBlock>();
 
         // Constructor
         public MainPage()
@@ -31,13 +33,17 @@ namespace Koos__OBD_Communicator
             InitializeComponent();
             configData = new ConfigurationData();
             obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000")), configData);
+            //obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.40.138"), Int32.Parse("35000")), configData);
             
             PIDRequestButton.Tap += PIDRequestButton_Tap;
+            DisplayItems.Add(0x1D, VehicleSpeed);
+            DisplayValues.Add(0x1D, SpeedValue);
 
             // Every second, request new sensor values or re-initialize (if no response for 10 seconds)
             DispatcherTimer requestNewPIDs = new DispatcherTimer();
             requestNewPIDs.Interval = TimeSpan.FromSeconds(1);
             requestNewPIDs.Tick += requestNewPIDs_Tick;
+            requestNewPIDs.Start();
 
             // subscribe to events
             configData.RaiseOBDSensorData += obd_newOBDSensorData;
@@ -107,8 +113,10 @@ namespace Koos__OBD_Communicator
 
         public void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
         {
+            updateStatus_async("New sensor data!");
             // what to do when new sensor data arrives
-            
+            if (this.DisplayValues[e.PIDCode] != null)
+                this.DisplayValues[e.PIDCode].Text = e.message;
             updateStatus_async(e.message);
         }
 

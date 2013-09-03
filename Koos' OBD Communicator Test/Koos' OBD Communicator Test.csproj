@@ -128,6 +128,10 @@
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommunicationProviders\CommunicationProviders.csproj">
+      <Project>{C5DFFD4E-E3DF-4C1B-9337-4D2452EF4238}</Project>
+      <Name>CommunicationProviders</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Koos%27 OBD Communicator\Koos%27 OBD Communicator.csproj">
       <Project>{3ED39BAC-EF9A-4AC5-AD9D-05250FD736AF}</Project>
       <Name>Koos%27 OBD Communicator</Name>

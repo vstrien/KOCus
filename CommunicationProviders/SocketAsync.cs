@@ -23,17 +23,23 @@ namespace CommunicationProviders
 
         public void ConnectAsync(EventHandler<SocketAsyncEventArgs> onCompletion)
         {
-            if (socket.Connected) // already connected
-                return;
-
-            SocketAsyncEventArgs socketEventArgs = new SocketAsyncEventArgs()
+            if (socket.Connected)
             {
-                RemoteEndPoint = new IPEndPoint(this.hostaddress, this.port)
-            };
+                // already connected, just invoke the 'on completion' event.
+                onCompletion.DynamicInvoke(null, null);
+            }
+            else
+            {
 
-            socketEventArgs.Completed += onCompletion;
-            
-            socket.ConnectAsync(socketEventArgs);
+                SocketAsyncEventArgs socketEventArgs = new SocketAsyncEventArgs()
+                {
+                    RemoteEndPoint = new IPEndPoint(this.hostaddress, this.port)
+                };
+
+                socketEventArgs.Completed += onCompletion;
+
+                socket.ConnectAsync(socketEventArgs);
+            }
         }
 
         public void ReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse, bool ensureConnection = true)

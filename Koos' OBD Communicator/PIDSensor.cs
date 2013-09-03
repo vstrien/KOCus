@@ -128,14 +128,18 @@ namespace Koos__OBD_Communicator
                     updateAvailability(OBDMessageContents);
                 else if (this.highestFormulaCharacterNumber > 0) // formula PID
                 {
-                    parseFormula(OBDMessageContents);
                     this.OnRaiseOBDSensorData(new OBDSensorDataEventArgs(
                             this.mode,
                             PID,
                             this.bytes,
-                            OBDMessageContents)
+                            OBDMessageContents,
+                            parseFormula(OBDMessageContents).ToString())
                     );
                 }
+                else
+                {
+                    // Nothing yet. Bit-encoded sensor is available, but we don't have the means to parse it (yet).
+                } 
             }
             else
             {

@@ -9,7 +9,7 @@ using CommunicationProviders;
 
 namespace Koos__OBD_Communicator
 {
-    class OBDDeviceCommunicatorAsync
+    public class OBDDeviceCommunicatorAsync
     {
 
         public event EventHandler<ResponseEventArgs> RaisePIDResponse;
@@ -24,27 +24,28 @@ namespace Koos__OBD_Communicator
 
         public void init_communication()
         {
+            
             // connect
             this.socket.ConnectAsync((s, e) =>
             {
                 // reset device
                 //this.socket.SendSync(vocabulary["RESET"]);
-                this.socket.SendAsync("AT Z\r", (s1, e1) =>
+                this.socket.SendAsync("AT Z" + '\r', (s1, e1) =>
                 {
                     // set line feed off
                     //this.socket.SendSync(vocabulary["LF OFF"]);
                     //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT L0\r", null);
+                    this.socket.SendAsync("AT L0" + '\r', null);
                     
                     // set headers on
                     //this.socket.SendSync(vocabulary["HEADERS ON"]);
                     //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT H1\r", null);
+                    this.socket.SendAsync("AT H1" + '\r', null);
                     
                     // set echo off
                     //this.socket.SendSync(vocabulary["ECHO OFF"]);
                     //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT E0\r", null);
+                    this.socket.SendAsync("AT E0" + '\r', null);
                 });
             });
         }
@@ -58,7 +59,7 @@ namespace Koos__OBD_Communicator
             var availableSensors = this.configuration.availableSensors();
             foreach (PIDSensor SensorsToCheck in availableSensors)
             {
-                string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + "\r";
+                string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + '\r';
 
                 this.socket.SendAsync(message, null);
             }
