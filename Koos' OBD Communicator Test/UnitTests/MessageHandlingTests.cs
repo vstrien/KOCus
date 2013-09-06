@@ -26,8 +26,9 @@ namespace Koos__OBD_Communicator_Test
         public void TestRecognitionOfReturnMessage()
         {
             string returnMessage_cleansed = "7E8064120A007B011";
+            int numberOfBytes = 6;
 
-            Assert.IsTrue(Koos__OBD_Communicator.Message.getBytesInMessage(returnMessage_cleansed) == 6);
+            Assert.IsTrue(Koos__OBD_Communicator.Message.getBytesInMessage(returnMessage_cleansed) == numberOfBytes);
         }
 
         [TestMethod]
@@ -66,11 +67,11 @@ namespace Koos__OBD_Communicator_Test
         [Description("Test if return message with wrong header is recognized as invalid")]
         public void TestValidationOfReturnMessageWrongHeader()
         {
-            string returnMessage_cleansed_headerShort = "E8074120A007B011";
-            string returnMessage_cleansed_headerWrong = "8E8074120A007B011";
+            string returnMessage_cleansed_headerTooShort = "E8064120A007B011";
+            string returnMessage_cleansed_headerInvalid = "8E8064120A007B011";
 
-            Assert.IsFalse(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed_headerShort));
-            Assert.IsFalse(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed_headerWrong));
+            Assert.IsFalse(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed_headerTooShort));
+            Assert.IsFalse(Koos__OBD_Communicator.Message.validHeader(returnMessage_cleansed_headerInvalid));
         }
 
         [TestMethod]
