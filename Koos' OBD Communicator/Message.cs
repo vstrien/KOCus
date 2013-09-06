@@ -56,7 +56,7 @@ namespace Koos__OBD_Communicator
         {
             string cleanedResponse = cleanReponse(checkedResponse);
 
-            return cleanedResponse.Substring((cleanedResponse.Length - (getBytesInMessage(cleanedResponse) * 2)) + 4);
+            return cleanedResponse.Substring((cleanedResponse.Length - (getBytesInMessage(cleanedResponse) * 2)));
         }
 
         public static ResponseDetails getMessageContentDetails(string checkedResponse)

@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using CommunicationProviders;
+using System.ComponentModel;
 
 namespace Koos__OBD_Communicator
 {
@@ -30,22 +31,22 @@ namespace Koos__OBD_Communicator
             {
                 // reset device
                 //this.socket.SendSync(vocabulary["RESET"]);
-                this.socket.SendAsync("AT Z" + '\r', (s1, e1) =>
+                this.socket.SendAsync("AT Z" + Environment.NewLine, (s1, e1) =>
                 {
                     // set line feed off
                     //this.socket.SendSync(vocabulary["LF OFF"]);
                     //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT L0" + '\r', null);
+                    this.socket.SendAsync("AT L0" + Environment.NewLine, null);
                     
                     // set headers on
                     //this.socket.SendSync(vocabulary["HEADERS ON"]);
                     //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT H1" + '\r', null);
+                    this.socket.SendAsync("AT H1" + Environment.NewLine, null);
                     
                     // set echo off
                     //this.socket.SendSync(vocabulary["ECHO OFF"]);
                     //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT E0" + '\r', null);
+                    this.socket.SendAsync("AT E0" + Environment.NewLine, null);
                 });
             });
         }
@@ -68,21 +69,21 @@ namespace Koos__OBD_Communicator
         /// <summary>
         /// Receives async messages from the OBD system, sends them to the configuration's parser
         /// </summary>
-        public void getAndHandleResponse()
+        public void getAndHandleResponses()
         {
             this.socket.ReceiveAsync((s, eventArgs) =>
             {
+                
                 if (eventArgs.SocketError != SocketError.Success)
                     return;
                 
-                string response = Encoding.UTF8.GetString(eventArgs.Buffer, eventArgs.Offset, eventArgs.BytesTransferred);
-                response = response.Trim('\0', '\n', '\r');
+                string responses = Encoding.UTF8.GetString(eventArgs.Buffer, eventArgs.Offset, eventArgs.BytesTransferred);
+                responses = responses.Trim('\0', '\n', '\r', '>');
+                
+                cleanAndHandleResponses(responses);
+                getAndHandleResponseJobAsync();
 
-                if (Message.isValid(response) != Message.ResponseValidity.Valid)
-                    return;
-
-                this.configuration.parseOBDResponse(response);
-
+                
                 //OnRaiseOBDSensorData(
                 //        new OBDSensorDataEventArgs(
                 //            Message.getModeOfMessage(cleanedResponse), 
@@ -91,6 +92,30 @@ namespace Koos__OBD_Communicator
                 //            Message.getMessageContents(cleanedResponse))
                 //    );
             });
+        }
+
+        public void cleanAndHandleResponses(string responses)
+        {
+            string[] responseList = responses.Replace('\n'.ToString(), "").Split('\r');
+            foreach (string response in responseList)
+            {
+                if (Message.isValid(response) == Message.ResponseValidity.Valid)
+                {
+                    this.OnRaisePIDResponse(new ResponseEventArgs(response));
+
+                    this.configuration.parseOBDResponse(response);
+                }
+            }
+        }
+
+        public void getAndHandleResponseJobAsync()
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += (sender, eventArgs) =>
+            {
+                    this.getAndHandleResponses();
+            };
+            worker.RunWorkerAsync();
         }
 
         protected virtual void OnRaisePIDResponse(ResponseEventArgs eventArgs)

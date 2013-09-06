@@ -36,14 +36,17 @@ namespace Koos__OBD_Communicator
             //obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.40.138"), Int32.Parse("35000")), configData);
             
             PIDRequestButton.Tap += PIDRequestButton_Tap;
-            DisplayItems.Add(0x1D, VehicleSpeed);
-            DisplayValues.Add(0x1D, SpeedValue);
+            PIDAnswerButton.Tap += PIDAnswerButton_Tap;
+            //DisplayItems.Add(0x1D, VehicleSpeed);
+            //DisplayValues.Add(0x1D, SpeedValue);
 
             // Every second, request new sensor values or re-initialize (if no response for 10 seconds)
             DispatcherTimer requestNewPIDs = new DispatcherTimer();
-            requestNewPIDs.Interval = TimeSpan.FromSeconds(1);
+            requestNewPIDs.Interval = TimeSpan.FromSeconds(2);
             requestNewPIDs.Tick += requestNewPIDs_Tick;
             requestNewPIDs.Start();
+
+            this.obd.getAndHandleResponseJobAsync(); // starts response job
 
             // subscribe to events
             configData.RaiseOBDSensorData += obd_newOBDSensorData;
@@ -51,14 +54,25 @@ namespace Koos__OBD_Communicator
             this.obd.RaisePIDResponse += obd_updateTimer;
         }
 
+        void PIDAnswerButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            requestNewValues();
+        }
+
         void requestNewPIDs_Tick(object sender, EventArgs e)
         {
+            requestNewValues();
+        }
+
+        private void requestNewValues()
+        {
             BackgroundWorker worker = new BackgroundWorker();
-                
+
             if (lastSeen.AddSeconds(10) < DateTime.Now)
             {
                 // 10 seconds without response. Re-init.
                 updateStatus_async("Initializing..");
+                lastSeen = DateTime.Now;
 
                 worker.DoWork += (s, eventArgs) =>
                 {
@@ -101,21 +115,16 @@ namespace Koos__OBD_Communicator
         {
             updateStatus_async("Requesting PIDs");
 
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, eventArgs) =>
-            {
-                updateStatus_async("Getting values...");
-                this.obd.getAndHandleResponse();
-                updateStatus_async("Finished getting PID values.");
-            };
-            worker.RunWorkerAsync();
+            this.obd.getAndHandleResponseJobAsync();
         }
+
+
 
         public void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
         {
             updateStatus_async("New sensor data!");
             // what to do when new sensor data arrives
-            if (this.DisplayValues[e.PIDCode] != null)
+            if (this.DisplayValues.Keys.Contains(e.PIDCode) && this.DisplayValues[e.PIDCode] != null)
                 this.DisplayValues[e.PIDCode].Text = e.message;
             updateStatus_async(e.message);
         }

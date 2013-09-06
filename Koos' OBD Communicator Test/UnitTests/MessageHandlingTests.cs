@@ -31,6 +31,19 @@ namespace Koos__OBD_Communicator_Test
         }
 
         [TestMethod]
+        [Description("Test if message body is extracted rightly")]
+        public void TestExtractionOfMessageBody()
+        {
+            string returnMessage_cleansed = "7E8064120A007B011";
+            string returnMessage_body = "4120A007B011";
+
+            // test if the message body is defined correctly:
+            Assert.IsTrue(Koos__OBD_Communicator.Message.getBytesInMessage(returnMessage_cleansed) * 2 == returnMessage_body.Length);
+            // test if the message body is extracted correctly:
+            Assert.IsTrue(Koos__OBD_Communicator.Message.getMessageContents(returnMessage_cleansed) == returnMessage_body);
+        }
+
+        [TestMethod]
         [Description("Test if valid return message is not mentioned with errors")]
         public void TestValidationOfValidReturnMessage()
         {

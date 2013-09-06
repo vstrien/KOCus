@@ -44,16 +44,21 @@
                         <toolkit:WrapPanel />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
-                <ListBoxItem x:Name="VehicleSpeed">
+                <!--<ListBoxItem x:Name="VehicleSpeed">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="SpeedLabel" Text="Speed 
                                    (km/h)" TextWrapping="Wrap" FontSize="30" />
                         <TextBlock x:Name="SpeedValue" Text="0" />
                     </StackPanel>
-                </ListBoxItem>
+                </ListBoxItem>-->
                 <ListBoxItem x:Name="PIDRequestButton">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="PIDRequestText" Text="Read results" TextWrapping="Wrap" FontSize="36" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem x:Name="PIDAnswerButton">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="PIDAnswerText" Text="Init" TextWrapping="Wrap" FontSize="36" />
                     </StackPanel>
                 </ListBoxItem>
             </ListBox>
