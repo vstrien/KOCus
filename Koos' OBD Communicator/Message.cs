@@ -76,7 +76,7 @@ namespace Koos__OBD_Communicator
         public static int getPIDOfMessage(string cleanedResponse)
         {
             // cleaned: "7E8064120A007B011"
-            // PID = byte 7, 2 tekens 20.
+            // PID = byte 7, 2 tekens: hier dus '20'.
             return int.Parse(cleanedResponse.Substring(7, 2), NumberStyles.HexNumber);
         }
 
