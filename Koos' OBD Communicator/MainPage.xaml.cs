@@ -52,6 +52,45 @@ namespace Koos__OBD_Communicator
             configData.RaiseOBDSensorData += obd_newOBDSensorData;
             this.obd.RaisePIDResponse += obd_RaiseResponse;
             this.obd.RaisePIDResponse += obd_updateTimer;
+
+            foreach (PIDSensor sensor in this.configData.availableSensors())
+            {
+                //<ListBoxItem x:Name="PIDRequestButton">
+                //    <StackPanel Orientation="Vertical">
+                //        <TextBlock x:Name="PIDRequestText" Text="Read results" TextWrapping="Wrap" FontSize="36" />
+                //    </StackPanel>
+                //</ListBoxItem>
+                TextBlock sensorDescription = new TextBlock() {
+                    Name = "PIDDesc " + sensor.PID.ToString(),
+                    FontSize = 30,
+                    Text = sensor.description
+                };
+
+                TextBlock sensorValue = new TextBlock()
+                {
+                    Name = "PIDValue " + sensor.PID.ToString(),
+                    Text = ""
+                };
+
+                StackPanel sensorStack = new StackPanel()
+                {
+                    Orientation = System.Windows.Controls.Orientation.Vertical
+                };
+                sensorStack.Children.Add(sensorDescription);
+                sensorStack.Children.Add(sensorValue);
+                
+                ListBoxItem sensorItem = new ListBoxItem();
+                sensorItem.Name = "sensor " + sensor.PID.ToString();
+                sensorItem.Content = sensorStack;
+
+                ControlsDisplay.Items.Add(sensorItem);
+
+                sensor.RaiseOBDSensorData += (object sender, OBDSensorDataEventArgs s) =>
+                {
+                    sensorValue.Text = s.value;
+                };
+
+            }
         }
 
         void PIDAnswerButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)

@@ -51,7 +51,7 @@ namespace Koos__OBD_Communicator
             // To determine the number of arguments needed, the highest used character in the formula will be stored.
             this.highestFormulaCharacter = GetHighestFormulaCharacterFrom(formula);
             if (this.highestFormulaCharacter == null)
-                this.highestFormulaCharacterNumber = 0;
+                this.highestFormulaCharacterNumber = -1; // because A = 0
             else if (this.highestFormulaCharacter != null)
             {
                 char character = (char)highestFormulaCharacter;
@@ -107,9 +107,10 @@ namespace Koos__OBD_Communicator
 
             // get PID from message
             int msgPID = Message.getPIDOfMessage(cleanedResponse);
+            int mode = Message.getModeOfMessage(cleanedResponse);
             string OBDMessageContents = Message.getMessageContents(response);
 
-            this.parseResponse(msgPID, OBDMessageContents);
+            this.parseResponse(msgPID, mode, OBDMessageContents);
         }
 
         /// <summary>
@@ -117,16 +118,16 @@ namespace Koos__OBD_Communicator
         /// </summary>
         /// <param name="msgPID">The PID number for which the returned message is meant</param>
         /// <param name="OBDMessageContents">The message, as returned by the Message helper class</param>
-        private void parseResponse(int msgPID, string OBDMessageContents)
+        private void parseResponse(int msgPID, int msgMode, string OBDMessageContents)
         {
-            if (msgPID == this.PID)
+            if (this.mode == msgMode && msgPID == this.PID)
             {
                 // The message is meant for the current PID. 
 
                 // Check the type of PID this is:
                 if (this.PIDSensors.Count > 0) // availability PID
                     updateAvailability(OBDMessageContents);
-                else if (this.highestFormulaCharacterNumber > 0) // formula PID
+                else if (this.highestFormulaCharacterNumber > -1) // formula PID
                 {
                     this.OnRaiseOBDSensorData(new OBDSensorDataEventArgs(
                             this.mode,
@@ -146,7 +147,7 @@ namespace Koos__OBD_Communicator
                 foreach (var child in this.PIDSensors)
                 {
                     // Would be better to tighten the scope here, only addressing possible targets.
-                    child.parseResponse(msgPID, OBDMessageContents);
+                    child.parseResponse(msgPID, msgMode, OBDMessageContents);
                 }
             }
         }
@@ -160,9 +161,9 @@ namespace Koos__OBD_Communicator
         {
             int bytesInMessage = Message.getBytesInMessage(OBDMessageContents);
 
-            if (this.formula != "" && this.highestFormulaCharacterNumber > bytesInMessage)
+            if (this.formula != "" && this.highestFormulaCharacterNumber >= bytesInMessage)
                 throw new Exception("Not all values are filled in the formula");
-            else if (this.formula != "" && this.highestFormulaCharacterNumber <= bytesInMessage)
+            else if (this.formula != "" && this.highestFormulaCharacterNumber < bytesInMessage)
             {
                 // vul formule in, A = byte 0, B = byte 1, C = byte 2, etc.
                 return this.TranslateSensorValues(OBDMessageContents);
@@ -184,7 +185,9 @@ namespace Koos__OBD_Communicator
 
             for (int c = 0; c <= this.highestFormulaCharacterNumber; c++)
             {
-                completedFormula = completedFormula.Replace(PIDSensor.alphabet[c].ToString(), int.Parse(OBDMessageContents.Substring(c * 2, 2), NumberStyles.HexNumber).ToString());
+                string messageValue = OBDMessageContents.Substring(c * 2 + 4, 2);
+                int messageValue_parsed = int.Parse(messageValue, NumberStyles.HexNumber);
+                completedFormula = completedFormula.Replace(PIDSensor.alphabet[c].ToString(), messageValue_parsed.ToString());
             }
 
             return this.expressionParser.Execute(completedFormula);

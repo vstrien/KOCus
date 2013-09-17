@@ -144,7 +144,8 @@ namespace Koos__OBD_Communicator
 
         public void parseOBDResponse(string response)
         {
-            this.possibleSensors.First().Value.parseResponse(response);
+            var targetSensor = this.possibleSensors.First();
+            targetSensor.Value.parseResponse(response);
         }
     
     }
