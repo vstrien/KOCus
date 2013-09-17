@@ -26,8 +26,8 @@
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <!--<RowDefinition Height="*"/>-->
         </Grid.RowDefinitions>
 
         <!--TitlePanel contains the name of the application and page title-->
@@ -36,36 +36,18 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <ListBox x:Name="ControlsDisplay" ItemContainerStyle="{StaticResource TileListBoxItemStyle}" Grid.Row="0" Grid.Column="0" DataContext="{Binding}">
-                <!-- set its ItemsPanel to be a WrapPanel -->
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <toolkit:WrapPanel />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <!--<ListBoxItem x:Name="VehicleSpeed">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="SpeedLabel" Text="Speed 
-                                   (km/h)" TextWrapping="Wrap" FontSize="30" />
-                        <TextBlock x:Name="SpeedValue" Text="0" />
-                    </StackPanel>
-                </ListBoxItem>-->
-                <ListBoxItem x:Name="PIDRequestButton">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="PIDRequestText" Text="Read results" TextWrapping="Wrap" FontSize="36" />
-                    </StackPanel>
-                </ListBoxItem>
-                <ListBoxItem x:Name="PIDAnswerButton">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="PIDAnswerText" Text="Init" TextWrapping="Wrap" FontSize="36" />
-                    </StackPanel>
-                </ListBoxItem>
-            </ListBox>
-        </Grid>
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="2">
+        <ListBox x:Name="ControlsDisplay" ItemContainerStyle="{StaticResource TileListBoxItemStyle}" Grid.Row="1" Grid.Column="0">
+                    <!-- set its ItemsPanel to be a WrapPanel -->
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <toolkit:WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+        
+        <!--<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="2">
         <TextBlock x:Name="StatusDisplay" HorizontalAlignment="Left" Margin="12,0,12,0" TextWrapping="Wrap" Text="{Binding status}" VerticalAlignment="Top"/>
-        </ScrollViewer>
+        </ScrollViewer>-->
     </Grid>
 
 </phone:PhoneApplicationPage>

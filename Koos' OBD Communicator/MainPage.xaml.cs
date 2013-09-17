@@ -34,11 +34,6 @@ namespace Koos__OBD_Communicator
             configData = new ConfigurationData();
             obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000")), configData);
             //obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.40.138"), Int32.Parse("35000")), configData);
-            
-            PIDRequestButton.Tap += PIDRequestButton_Tap;
-            PIDAnswerButton.Tap += PIDAnswerButton_Tap;
-            //DisplayItems.Add(0x1D, VehicleSpeed);
-            //DisplayValues.Add(0x1D, SpeedValue);
 
             // Every second, request new sensor values or re-initialize (if no response for 10 seconds)
             DispatcherTimer requestNewPIDs = new DispatcherTimer();
@@ -53,43 +48,52 @@ namespace Koos__OBD_Communicator
             this.obd.RaisePIDResponse += obd_RaiseResponse;
             this.obd.RaisePIDResponse += obd_updateTimer;
 
-            foreach (PIDSensor sensor in this.configData.availableSensors())
+            AddPIDSensorDisplay(this.configData.availableSensors());
+        }
+
+        private void AddPIDSensorDisplay(List<PIDSensor> sensors)
+        {
+            foreach (PIDSensor sensor in sensors)
             {
-                //<ListBoxItem x:Name="PIDRequestButton">
-                //    <StackPanel Orientation="Vertical">
-                //        <TextBlock x:Name="PIDRequestText" Text="Read results" TextWrapping="Wrap" FontSize="36" />
-                //    </StackPanel>
-                //</ListBoxItem>
-                TextBlock sensorDescription = new TextBlock() {
-                    Name = "PIDDesc " + sensor.PID.ToString(),
-                    FontSize = 30,
-                    Text = sensor.description
-                };
-
-                TextBlock sensorValue = new TextBlock()
+                if (sensor.PIDSensors.Count > 0)
                 {
-                    Name = "PIDValue " + sensor.PID.ToString(),
-                    Text = ""
-                };
-
-                StackPanel sensorStack = new StackPanel()
+                    this.AddPIDSensorDisplay(sensor.PIDSensors);
+                }
+                else
                 {
-                    Orientation = System.Windows.Controls.Orientation.Vertical
-                };
-                sensorStack.Children.Add(sensorDescription);
-                sensorStack.Children.Add(sensorValue);
-                
-                ListBoxItem sensorItem = new ListBoxItem();
-                sensorItem.Name = "sensor " + sensor.PID.ToString();
-                sensorItem.Content = sensorStack;
+                    TextBlock sensorDescription = new TextBlock()
+                    {
+                        //Name = "PIDDesc " + sensor.PID.ToString(),
+                        FontSize = 30,
+                        Text = sensor.description
+                    };
 
-                ControlsDisplay.Items.Add(sensorItem);
+                    TextBlock sensorValue = new TextBlock()
+                    {
+                        //Name = "PIDValue " + sensor.PID.ToString(),
+                        Text = ""
+                    };
 
-                sensor.RaiseOBDSensorData += (object sender, OBDSensorDataEventArgs s) =>
-                {
-                    sensorValue.Text = s.value;
-                };
+                    StackPanel sensorStack = new StackPanel()
+                    {
+                        Orientation = System.Windows.Controls.Orientation.Vertical
+                    };
+                    sensorStack.Children.Add(sensorDescription);
+                    sensorStack.Children.Add(sensorValue);
 
+                    ListBoxItem sensorItem = new ListBoxItem()
+                    {
+                        //Name = "sensor " + sensor.PID.ToString();
+                        Content = sensorStack
+                    };
+
+                    ControlsDisplay.Items.Add(sensorItem);
+
+                    sensor.RaiseOBDSensorData += (object sender, OBDSensorDataEventArgs s) =>
+                    {
+                        sensorValue.Text = s.value;
+                    };
+                }
             }
         }
 
@@ -138,16 +142,16 @@ namespace Koos__OBD_Communicator
 
         void updateStatus_async(string newStatus)
         {
-            this.Dispatcher.BeginInvoke(delegate()
-            {
-                var maxLength = 1000;
-                var newText = newStatus + Environment.NewLine + StatusDisplay.Text;
+            //this.Dispatcher.BeginInvoke(delegate()
+            //{
+            //    var maxLength = 1000;
+            //    var newText = newStatus + Environment.NewLine + StatusDisplay.Text;
 
-                var newText_capped = newText.Substring(0, Math.Min(newText.Length, maxLength));
+            //    var newText_capped = newText.Substring(0, Math.Min(newText.Length, maxLength));
 
-                // insert on top
-                StatusDisplay.Text = newText_capped;
-            });
+            //    // insert on top
+            //    StatusDisplay.Text = newText_capped;
+            //});
         }
 
         void PIDRequestButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
