@@ -73,14 +73,14 @@ namespace Koos__OBD_Communicator
         {
             this.socket.ReceiveAsync((s, eventArgs) =>
             {
-                
-                if (eventArgs.SocketError != SocketError.Success)
-                    return;
-                
-                string responses = Encoding.UTF8.GetString(eventArgs.Buffer, eventArgs.Offset, eventArgs.BytesTransferred);
-                responses = responses.Trim('\0', '\n', '\r', '>');
-                
-                cleanAndHandleResponses(responses);
+
+                if (eventArgs.SocketError == SocketError.Success)
+                {
+                    string responses = Encoding.UTF8.GetString(eventArgs.Buffer, eventArgs.Offset, eventArgs.BytesTransferred);
+                    responses = responses.Trim('\0', '\n', '\r', '>');
+
+                    cleanAndHandleResponses(responses);
+                }
                 getAndHandleResponseJobAsync();
 
                 

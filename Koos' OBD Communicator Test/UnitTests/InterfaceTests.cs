@@ -22,16 +22,25 @@ namespace Koos__OBD_Communicator_Test.UnitTests
         public void EmptyFormulaTest()
         {
             Koos__OBD_Communicator.MainPage MPage = new Koos__OBD_Communicator.MainPage();
-            MPage.obd_newOBDSensorData(this, new Koos__OBD_Communicator.OBDSensorDataEventArgs(01, 01, 4, "0007E100", ""));
+            MPage.configData.parseOBDResponse("7E8 01 01 04 00 07 E1 00");
         }
 
         [TestMethod]
-        [Description("Check if PID with formula is parsed correctly")]
+        [Description("Check if PID with formula is displayed correctly on the main screen within one second")]
         public void FilledFormulaeTest()
         {
-            //<PIDSensor PID="0C" bytes="01" Description="Engine RPM" Formula="((A*256)+B)/4" />
+            string PIDreturn_engineLoad = "7E8 03 41 04 FF";
+            // 0x03 bytes, mode (0x41 - 0x40) = 0x01, PID 0x04, message 0xFF = 0d255
+            // betekenis: Calculated engine load value (%). Formule: A*100/255 = 255*100/255 = 100%
+            string expectedAnswer = "100";
             Koos__OBD_Communicator.MainPage MPage = new Koos__OBD_Communicator.MainPage();
-            MPage.obd_newOBDSensorData(this, new Koos__OBD_Communicator.OBDSensorDataEventArgs(01, 0x0C, 2, "DD30", ""));
+            MPage.configData.parseOBDResponse(PIDreturn_engineLoad);
+            
+            DateTime startWaiting = DateTime.Now;
+            while (DateTime.Now < startWaiting.AddSeconds(1)) ;
+            Assert.Equals(MPage.DisplayValues[4].Text, expectedAnswer);
         }
+
+
     }
 }

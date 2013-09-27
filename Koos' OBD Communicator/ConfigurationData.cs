@@ -149,17 +149,4 @@ namespace Koos__OBD_Communicator
         }
     
     }
-
-
-    //class RequestCodes
-    //{
-    //    public byte[] testmode = new byte[2];
-    //    public string description;
-    //}
-
-    //class ResponseCodes
-    //{
-    //    public string response;
-    //    public string description;
-    //}
 }

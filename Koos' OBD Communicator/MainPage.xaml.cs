@@ -21,31 +21,46 @@ namespace Koos__OBD_Communicator
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        ConfigurationData configData;
+        public ConfigurationData configData;
         OBDDeviceCommunicatorAsync obd;
         DateTime lastSeen = DateTime.MinValue;
-        Dictionary<int, ListBoxItem> DisplayItems = new Dictionary<int,ListBoxItem>();
-        Dictionary<int, TextBlock> DisplayValues = new Dictionary<int,TextBlock>();
 
-        // Constructor
+#if DEBUG
+        // benodigd voor unit tests
+        public Dictionary<int, TextBlock> DisplayValues = new Dictionary<int,TextBlock>();
+#endif
+
+        // Constructor - voor lokaal testen met een Python-backend: eigen IP-adres gebruiken (opvragen!)
+        // Voor gebruik in de auto: zet op 'Release'.
+#if DEBUG
         public MainPage()
+            : this(IPAddress.Parse("192.168.53.21"), Int32.Parse("35000"))
+        {
+            
+        } 
+#else
+        public MainPage()
+            : this(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000"))
+        {
+
+        }
+#endif
+        public MainPage(IPAddress IP, int port)
         {
             InitializeComponent();
             configData = new ConfigurationData();
-            obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000")), configData);
+            obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IP, port), configData);
             //obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.40.138"), Int32.Parse("35000")), configData);
 
             // Every second, request new sensor values or re-initialize (if no response for 10 seconds)
             DispatcherTimer requestNewPIDs = new DispatcherTimer();
-            requestNewPIDs.Interval = TimeSpan.FromSeconds(2);
+            requestNewPIDs.Interval = TimeSpan.FromSeconds(1);
             requestNewPIDs.Tick += requestNewPIDs_Tick;
             requestNewPIDs.Start();
 
             this.obd.getAndHandleResponseJobAsync(); // starts response job
 
             // subscribe to events
-            configData.RaiseOBDSensorData += obd_newOBDSensorData;
-            this.obd.RaisePIDResponse += obd_RaiseResponse;
             this.obd.RaisePIDResponse += obd_updateTimer;
 
             AddPIDSensorDisplay(this.configData.availableSensors());
@@ -61,6 +76,7 @@ namespace Koos__OBD_Communicator
                 }
                 else
                 {
+                    
                     TextBlock sensorDescription = new TextBlock()
                     {
                         //Name = "PIDDesc " + sensor.PID.ToString(),
@@ -70,10 +86,12 @@ namespace Koos__OBD_Communicator
 
                     TextBlock sensorValue = new TextBlock()
                     {
-                        //Name = "PIDValue " + sensor.PID.ToString(),
+                        Name = "PIDValue " + sensor.PID.ToString(),
                         Text = ""
                     };
-
+#if DEBUG
+                    this.DisplayValues[sensor.PID] = sensorValue;
+#endif           
                     StackPanel sensorStack = new StackPanel()
                     {
                         Orientation = System.Windows.Controls.Orientation.Vertical
@@ -86,20 +104,19 @@ namespace Koos__OBD_Communicator
                         //Name = "sensor " + sensor.PID.ToString();
                         Content = sensorStack
                     };
-
+                    // this.DisplayItems[sensor.PID] = sensorItem;
+                    
                     ControlsDisplay.Items.Add(sensorItem);
-
+                    
                     sensor.RaiseOBDSensorData += (object sender, OBDSensorDataEventArgs s) =>
                     {
-                        sensorValue.Text = s.value;
+                        this.Dispatcher.BeginInvoke(delegate()
+                        {
+                            sensorValue.Text = s.value;
+                        });
                     };
                 }
             }
-        }
-
-        void PIDAnswerButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            requestNewValues();
         }
 
         void requestNewPIDs_Tick(object sender, EventArgs e)
@@ -159,22 +176,6 @@ namespace Koos__OBD_Communicator
             updateStatus_async("Requesting PIDs");
 
             this.obd.getAndHandleResponseJobAsync();
-        }
-
-
-
-        public void obd_newOBDSensorData(object sender, OBDSensorDataEventArgs e)
-        {
-            updateStatus_async("New sensor data!");
-            // what to do when new sensor data arrives
-            if (this.DisplayValues.Keys.Contains(e.PIDCode) && this.DisplayValues[e.PIDCode] != null)
-                this.DisplayValues[e.PIDCode].Text = e.message;
-            updateStatus_async(e.message);
-        }
-
-        void obd_RaiseResponse(object sender, ResponseEventArgs e)
-        {
-            updateStatus_async(e.message);
         }
 
         private void obd_updateTimer(object sender, ResponseEventArgs e)
