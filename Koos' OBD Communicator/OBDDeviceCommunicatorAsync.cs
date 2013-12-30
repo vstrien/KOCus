@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using CommunicationProviders;
 using System.ComponentModel;
+using Logger = CaledosLab.Portable.Logging.Logger;
 
 namespace Koos__OBD_Communicator
 {
@@ -29,26 +30,68 @@ namespace Koos__OBD_Communicator
             // connect
             this.socket.ConnectAsync((s, e) =>
             {
-                // reset device
-                //this.socket.SendSync(vocabulary["RESET"]);
-                this.socket.SendAsync("AT Z" + Environment.NewLine, (s1, e1) =>
-                {
-                    // set line feed off
-                    //this.socket.SendSync(vocabulary["LF OFF"]);
-                    //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT L0" + Environment.NewLine, null);
-                    
-                    // set headers on
-                    //this.socket.SendSync(vocabulary["HEADERS ON"]);
-                    //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT H1" + Environment.NewLine, null);
-                    
-                    // set echo off
-                    //this.socket.SendSync(vocabulary["ECHO OFF"]);
-                    //this.socket.ReceiveUntilLastCharacterIs('>');
-                    this.socket.SendAsync("AT E0" + Environment.NewLine, null);
-                });
+                sendReset();
             });
+        }
+
+        private void sendReset()
+        {
+            // reset device
+            //this.socket.SendSync(vocabulary["RESET"]);
+            Logger.WriteLine("Sending " + "AT Z (RESET)");
+            this.socket.SendAsync("AT Z" + Environment.NewLine, (s1, e1) =>
+            {
+                sendLinefeed();
+
+                sendHeaders();
+
+                sendEcho();
+            });
+        }
+
+        // set echo off
+        private void sendEcho(bool enable = false)
+        {
+            if (enable)
+            {
+                Logger.WriteLine("Sending " + "AT E1 (ECHO ON)");
+                this.socket.SendAsync("AT E1" + Environment.NewLine, null);
+            }
+            else
+            {
+                Logger.WriteLine("Sending " + "AT E0 (ECHO OFF)");
+                this.socket.SendAsync("AT E0" + Environment.NewLine, null);
+            }
+        }
+
+        // set headers on
+        private void sendHeaders(bool enable = true)
+        {
+            if (enable)
+            {
+                Logger.WriteLine("Sending " + "AT H1 (HEADERS ON)");
+                this.socket.SendAsync("AT H1" + Environment.NewLine, null);
+            }
+            else
+            {
+                Logger.WriteLine("Sending " + "AT H0 (HEADERS OFF)");
+                this.socket.SendAsync("AT H0" + Environment.NewLine, null);
+            }
+        }
+
+        // set line feed off
+        private void sendLinefeed(bool enable = false)
+        {
+            if (enable)
+            {
+                Logger.WriteLine("Sending " + "AT L1 (LF ON)");
+                this.socket.SendAsync("AT L1" + Environment.NewLine, null);
+            }
+            else
+            {
+                Logger.WriteLine("Sending " + "AT L0 (LF OFF)");
+                this.socket.SendAsync("AT L0" + Environment.NewLine, null);
+            }
         }
         
         /// <summary>
@@ -58,10 +101,12 @@ namespace Koos__OBD_Communicator
         public void checkSensorsAsync()
         {    
             var availableSensors = this.configuration.availableSensors();
+            Logger.WriteLine("Requesting available sensors");
+
             foreach (PIDSensor SensorsToCheck in availableSensors)
             {
                 string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + '\r';
-
+                Logger.WriteLine("Sending " + message);
                 this.socket.SendAsync(message, null);
             }
         }
@@ -99,11 +144,30 @@ namespace Koos__OBD_Communicator
             string[] responseList = responses.Replace('\n'.ToString(), "").Split('\r');
             foreach (string response in responseList)
             {
+                Logger.WriteLine("New PID response");
+                Logger.WriteLine(response);
                 if (Message.isValid(response) == Message.ResponseValidity.Valid)
                 {
                     this.OnRaisePIDResponse(new ResponseEventArgs(response));
+                    Logger.WriteLine("Valid");
 
                     this.configuration.parseOBDResponse(response);
+                }
+                else
+                {
+                    switch (Message.isValid(response))
+                    {
+                        case Message.ResponseValidity.InvalidContents:
+                            Logger.WriteLine("Invalid contents");
+                            break;
+                        case Message.ResponseValidity.InvalidHeader:
+                            Logger.WriteLine("Invalid header");
+
+                            break;
+                        case Message.ResponseValidity.InvalidSize:
+                            Logger.WriteLine("Invalid size");
+                            break;
+                    }
                 }
             }
         }

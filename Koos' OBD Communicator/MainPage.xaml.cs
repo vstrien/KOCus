@@ -16,6 +16,8 @@ using Microsoft.Phone.Controls;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Threading;
+using Logger = CaledosLab.Portable.Logging.Logger;
+using Microsoft.Phone.Tasks;
 
 namespace Koos__OBD_Communicator
 {
@@ -34,7 +36,7 @@ namespace Koos__OBD_Communicator
         // Voor gebruik in de auto: zet op 'Release'.
 #if DEBUG
         public MainPage()
-            : this(IPAddress.Parse("192.168.53.21"), Int32.Parse("35000"))
+            : this(IPAddress.Parse("192.168.1.46"), Int32.Parse("35000"))
         {
             
         } 
@@ -181,6 +183,34 @@ namespace Koos__OBD_Communicator
         private void obd_updateTimer(object sender, ResponseEventArgs e)
         {
             this.lastSeen = DateTime.Now;
+        }
+
+        private void sendLog(object sender, EventArgs e)
+        {
+            Logger.WriteLine("Begin Send via email");
+
+            string Subject = "KoCus OBD inspector LOG";
+
+            try
+            {
+                EmailComposeTask mail = new EmailComposeTask();
+                mail.Subject = Subject;
+                mail.Body = Logger.GetStoredLog();
+
+                if (mail.Body.Length > 32000) // max 32K 
+                {
+                    mail.Body = mail.Body.Substring(mail.Body.Length - 32000);
+                }
+
+                mail.Show();
+            }
+            catch
+            {
+                MessageBox.Show("unable to create the email message");
+                Logger.WriteLine("unable to create the email message");
+            }
+
+            Logger.WriteLine("End Send via email");
         }
     }
 }

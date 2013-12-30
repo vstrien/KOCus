@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Logger = CaledosLab.Portable.Logging.Logger;
 
 namespace Koos__OBD_Communicator
 {
@@ -102,13 +103,20 @@ namespace Koos__OBD_Communicator
         /// <param name="response">the uncleaned, unfiltered response from the car</param>
         public void parseResponse(string response)
         {
+            Logger.WriteLine("Parsing response");
 
             string cleanedResponse = Message.cleanReponse(response);
+            Logger.WriteLine("Cleaned response: " + cleanedResponse);
 
             // get PID from message
             int msgPID = Message.getPIDOfMessage(cleanedResponse);
             int mode = Message.getModeOfMessage(cleanedResponse);
             string OBDMessageContents = Message.getMessageContents(response);
+
+            Logger.WriteLine("PID: " + msgPID.ToString());
+            Logger.WriteLine("mode: " + mode.ToString());
+            Logger.WriteLine("Contents: " + OBDMessageContents);
+
 
             this.parseResponse(msgPID, mode, OBDMessageContents);
         }
@@ -120,30 +128,46 @@ namespace Koos__OBD_Communicator
         /// <param name="OBDMessageContents">The message, as returned by the Message helper class</param>
         private void parseResponse(int msgPID, int msgMode, string OBDMessageContents)
         {
+            Logger.WriteLine("Looking up mode " + msgMode.ToString() + " sensor " + msgPID.ToString() + " inside database...");
+
             if (this.mode == msgMode && msgPID == this.PID)
             {
+                Logger.WriteLine("Sensor found for mode " + msgMode.ToString() + " PID " + msgPID.ToString());
+
                 // The message is meant for the current PID. 
 
                 // Check the type of PID this is:
-                if (this.PIDSensors.Count > 0) // availability PID
+                if (this.PIDSensors.Count > 0)
+                { 
+                    // availability PID
+                    Logger.WriteLine("Availability PID found");
                     updateAvailability(OBDMessageContents);
+                }
                 else if (this.highestFormulaCharacterNumber > -1) // formula PID
                 {
+                    Logger.WriteLine("Formula PID found: " + this.formula);
+
+                    string parsedFormula = parseFormula(OBDMessageContents).ToString();
+                    Logger.WriteLine("Formula: " + parsedFormula);
                     this.OnRaiseOBDSensorData(new OBDSensorDataEventArgs(
                             this.mode,
                             PID,
                             this.bytes,
                             OBDMessageContents,
-                            parseFormula(OBDMessageContents).ToString())
+                            parsedFormula)
                     );
                 }
                 else
                 {
+                    Logger.WriteLine("Bit-encoded sensor - skipping parse action");
                     // Nothing yet. Bit-encoded sensor is available, but we don't have the means to parse it (yet).
                 } 
             }
             else
             {
+                Logger.WriteLine("At mode " + this.mode.ToString() + " PID " + this.PID.ToString());
+                Logger.WriteLine("Looking at children...");
+
                 foreach (var child in this.PIDSensors)
                 {
                     // Would be better to tighten the scope here, only addressing possible targets.
@@ -199,6 +223,8 @@ namespace Koos__OBD_Communicator
         /// <param name="supportedSensors"></param>
         private void updateAvailability(string supportedSensors)
         {
+            Logger.WriteLine("Updating availability PID to " + supportedSensors);
+                    
             // If this PID is an 'availability' PID, it should have a 'start' number of the first PID available here.
             ulong u_startPID = (ulong)this.firstPID;
             ulong u_endPID = u_startPID + 31;
@@ -212,10 +238,14 @@ namespace Koos__OBD_Communicator
                 var result = this.PIDSensors.Where(sensor => ((ulong)sensor.PID == currentPID_absolute));
                 if ((nHex & currentPID_bit) == currentPID_bit && result.Count() == 1)
                 {
+                    Logger.WriteLine("Setting PID " + currentPID_absolute + "(0x" + currentPID_absolute.ToString("x") + " available");
+                    
                     result.First().isAvailable = true;
                 }
                 else if (result.Count() == 1)
                 {
+                    Logger.WriteLine("Setting PID " + currentPID_absolute + "(0x" + currentPID_absolute.ToString("x") + " available");
+                    
                     result.First().isAvailable = false;
                 }
             }

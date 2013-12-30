@@ -12,11 +12,16 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using System.IO.IsolatedStorage;
+using System.IO;
+using Logger = CaledosLab.Portable.Logging.Logger;
 
 namespace Koos__OBD_Communicator
 {
     public partial class App : Application
     {
+        private string LogFile = "logfile.txt";
+
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>
@@ -28,6 +33,22 @@ namespace Koos__OBD_Communicator
         /// </summary>
         public App()
         {
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                if (storage.FileExists(LogFile))
+                {
+                    using (IsolatedStorageFileStream fs = storage.OpenFile(LogFile, FileMode.Open))
+                    {
+                        using (StreamReader reader = new StreamReader(fs))
+                        {
+                            Logger.Load(reader);
+                        }
+                    }
+                }
+            }
+
+            Logger.WriteLine("Start");
+
             // Global handler for uncaught exceptions. 
             UnhandledException += Application_UnhandledException;
 
@@ -81,6 +102,16 @@ namespace Koos__OBD_Communicator
         // This code will not execute when the application is deactivated
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                using (IsolatedStorageFileStream fs = storage.CreateFile(LogFile))
+                {
+                    using (StreamWriter writer = new StreamWriter(fs))
+                    {
+                        Logger.Save(writer);
+                    }
+                }
+            }
         }
 
         // Code to execute if a navigation fails
@@ -100,6 +131,10 @@ namespace Koos__OBD_Communicator
             {
                 // An unhandled exception has occurred; break into the debugger
                 System.Diagnostics.Debugger.Break();
+            }
+            else
+            {
+                Logger.WriteLine(e.ExceptionObject);
             }
         }
 
