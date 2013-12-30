@@ -51,7 +51,8 @@
     </Grid>
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="False">
-            <shell:ApplicationBarIconButton IconUri="/Images/upload.png" Text="Upload log" Click="sendLog" />
+            <shell:ApplicationBarIconButton IconUri="/Images/upload.png" Text="Upload" Click="sendLog" />
+            <shell:ApplicationBarIconButton IconUri="/Images/feature.search.png" Text="View" Click="viewLog" />
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

@@ -37,17 +37,19 @@ namespace Koos__OBD_Communicator
             {
                 if (storage.FileExists(LogFile))
                 {
-                    using (IsolatedStorageFileStream fs = storage.OpenFile(LogFile, FileMode.Open))
-                    {
-                        using (StreamReader reader = new StreamReader(fs))
-                        {
-                            Logger.Load(reader);
-                        }
-                    }
+                    storage.DeleteFile(LogFile);
+                    //using (IsolatedStorageFileStream fs = storage.OpenFile(LogFile, FileMode.Open))
+                    //{
+                    //    using (StreamReader reader = new StreamReader(fs))
+                    //    {
+                    //        Logger.Load(reader);
+                    //    }
+                    //}
                 }
             }
 
             Logger.WriteLine("Start");
+            Logger.WriteLine("Newline is: " + ReplaceString.StringLiteral(Environment.NewLine));
 
             // Global handler for uncaught exceptions. 
             UnhandledException += Application_UnhandledException;

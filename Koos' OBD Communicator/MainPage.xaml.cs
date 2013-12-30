@@ -141,7 +141,7 @@ namespace Koos__OBD_Communicator
                     obd.init_communication();
                 };
             }
-            else
+            else if (obd.isConnected)
             {
                 updateStatus_async("Requesting new sensors..");
 
@@ -211,6 +211,11 @@ namespace Koos__OBD_Communicator
             }
 
             Logger.WriteLine("End Send via email");
+        }
+
+        private void viewLog(object sender, EventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/LogContents.xaml", UriKind.Relative));
         }
     }
 }

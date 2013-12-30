@@ -17,6 +17,7 @@ namespace Koos__OBD_Communicator
         public event EventHandler<ResponseEventArgs> RaisePIDResponse;
         public ConfigurationData configuration { get; set; }
         ISocketAsyncProvider socket;
+        public bool isConnected = false;
 
         public OBDDeviceCommunicatorAsync(ISocketAsyncProvider socket, ConfigurationData currentConfiguration)
         {
@@ -30,7 +31,15 @@ namespace Koos__OBD_Communicator
             // connect
             this.socket.ConnectAsync((s, e) =>
             {
-                sendReset();
+                if (e.SocketError == SocketError.Success)
+                {
+                    this.isConnected = true;
+                    sendReset();
+                }
+                else
+                {
+                    this.isConnected = false;
+                }
             });
         }
 
@@ -162,7 +171,6 @@ namespace Koos__OBD_Communicator
                             break;
                         case Message.ResponseValidity.InvalidHeader:
                             Logger.WriteLine("Invalid header");
-
                             break;
                         case Message.ResponseValidity.InvalidSize:
                             Logger.WriteLine("Invalid size");
