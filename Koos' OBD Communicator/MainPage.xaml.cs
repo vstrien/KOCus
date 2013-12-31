@@ -130,26 +130,94 @@ namespace Koos__OBD_Communicator
         {
             BackgroundWorker worker = new BackgroundWorker();
 
-            if (lastSeen.AddSeconds(10) < DateTime.Now)
-            {
-                // 10 seconds without response. Re-init.
-                updateStatus_async("Initializing..");
-                lastSeen = DateTime.Now;
+            /**
+             * There are two main routines:
+             * - initializing (and giving instructions about how messages should be formed)
+             * - querying sensors
+             * 
+             * Initializing can be subdivided in four steps:
+             * 1. Reset all settings
+             * 2. Enable headers ('7E8')
+             * 3. Disable linefeeds ('\n')
+             * 4. Disable echo-messages (OBD confirming the arrival of messages by returning them)
+             * 
+             * Steps 2, 3 and 4 should not be executed before step 1 is finished.
+             * 
+             * Querying is simple: just ask the OBD the current setting of all sensors that fulfill the following requirements:
+             * - we know how to handle them
+             * - the OBD has stated that the sensor is available
+             * Querying should only be done when the initialization process is finished.
+             * Whenever the OBD doesn't reply any message that makes sense within 10 seconds, the init process should be called again.
+             */
 
-                worker.DoWork += (s, eventArgs) =>
-                {
-                    obd.init_communication();
-                };
-            }
-            else if (obd.isConnected)
+            if(lastSeen.AddSeconds(10) >= DateTime.Now  // OBD has 'spoken' less then 10 seconds ago
+                && obd.isConnected                      // OBD is connected
+                                                        // Initializing steps are all four executed:
+                && obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed    
+                && obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
+                && obd.linefeedStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
+                && obd.echoStatus == OBDDeviceCommunicatorAsync.MessageState.Sent)
             {
-                updateStatus_async("Requesting new sensors..");
+                // Query
+                Logger.WriteLine("Requesting new sensors..");
 
                 worker.DoWork += (s, eventArgs) =>
                 {
                     obd.checkSensorsAsync();
                 };
             }
+            else if (lastSeen.AddSeconds(10) < DateTime.Now 
+                || obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
+            {
+                // 10 seconds without response, or the init hasn't been sent yet. 
+                Logger.WriteLine("(Re-)Initializing..");
+                
+                // reset last seen date
+                lastSeen = DateTime.Now;
+                
+                // re-init (includes reset)
+                worker.DoWork += (s, eventArgs) =>
+                {
+                    obd.init_communication();
+                };
+            }
+            else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
+                && obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
+            {
+                // reset last seen date
+                lastSeen = DateTime.Now;
+                
+                // send 'set headers on'
+                worker.DoWork += (s, eventArgs) =>
+                {
+                    obd.sendHeaders(true);
+                };
+            }
+            else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
+                && obd.linefeedStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
+            {
+                // reset last seen date
+                lastSeen = DateTime.Now;
+                
+                // send 'set linefeed off'
+                worker.DoWork += (s, eventArgs) =>
+                {
+                    obd.sendLinefeed(false);
+                };
+            }
+            else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
+                && obd.echoStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
+            {
+                // reset last seen date
+                lastSeen = DateTime.Now;
+                
+                // send 'set echo off'
+                worker.DoWork += (s, eventArgs) =>
+                {
+                    obd.sendEcho(false);
+                };
+            }
+
             //For future:
             //worker.DoWork += (s, eventArgs) =>
             //{
@@ -158,24 +226,9 @@ namespace Koos__OBD_Communicator
             worker.RunWorkerAsync();
         }
 
-
-        void updateStatus_async(string newStatus)
-        {
-            //this.Dispatcher.BeginInvoke(delegate()
-            //{
-            //    var maxLength = 1000;
-            //    var newText = newStatus + Environment.NewLine + StatusDisplay.Text;
-
-            //    var newText_capped = newText.Substring(0, Math.Min(newText.Length, maxLength));
-
-            //    // insert on top
-            //    StatusDisplay.Text = newText_capped;
-            //});
-        }
-
         void PIDRequestButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
         {
-            updateStatus_async("Requesting PIDs");
+            Logger.WriteLine("Requesting PIDs");
 
             this.obd.getAndHandleResponseJobAsync();
         }

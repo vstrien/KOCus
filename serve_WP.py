@@ -47,10 +47,14 @@ while 1:
     buffer = bytearray(empty_array)
     sock.recv_into(buffer)
     print(buffer[:5])
-    
+    send_chunks(sock, buffer[:5].decode('utf-8'))
 
-  send_hex(sock, "374538203036203431203230204130203037204230203131200d")
-
+  # send_hex(sock, "374538203036203431203230204130203037204230203131200d")
+  #7E8 06 41 20 A0 07 B0 11 \r
+  
+  send_hex(sock, "374538203036203431203030204245203346204138203131200d0a0d0a3e")
+  #7E8 06 41 00 BE 3F A8 11 \r\n\r\n>
+  
   while 1:
     sock.recv_into(buffer)
     print(buffer)

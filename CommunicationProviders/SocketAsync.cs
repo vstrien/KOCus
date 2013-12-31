@@ -21,12 +21,13 @@ namespace CommunicationProviders
             this.port = port;
         }
 
-        public void ConnectAsync(EventHandler<SocketAsyncEventArgs> onCompletion)
+        public bool ConnectAsync(EventHandler<SocketAsyncEventArgs> onCompletion)
         {
             if (socket.Connected)
             {
                 // already connected, just invoke the 'on completion' event.
                 onCompletion.DynamicInvoke(null, null);
+                return false; // operation not pending - return synchronously
             }
             else
             {
@@ -38,19 +39,27 @@ namespace CommunicationProviders
 
                 socketEventArgs.Completed += onCompletion;
 
-                socket.ConnectAsync(socketEventArgs);
+                return socket.ConnectAsync(socketEventArgs);
             }
         }
 
-        public void ReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse, bool ensureConnection = true)
+        public bool ReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse, bool ensureConnection = true)
         {
             if (ensureConnection)
             {
-                this.ConnectAsync((s, e) =>
+                if (this.ConnectAsync((s, e) =>
                 {
                     this.ReceiveAsync(handleResponse, false);
-                });
-                return;
+                }))
+                {
+                    return true; // operation pending - return asynchronously
+                }
+                else
+                {
+                    // connection returned immediately - connection was executed synchronously
+                    return this.ReceiveAsync(handleResponse, false);
+                }
+                
             }
 
             // We are re-using the _socket object initialized in the Connect method
@@ -65,7 +74,7 @@ namespace CommunicationProviders
                 socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
                 socketEventArg.Completed += handleResponse;
 
-                socket.ReceiveAsync(socketEventArg);
+                return socket.ReceiveAsync(socketEventArg);
             }
             else
             {
@@ -76,7 +85,7 @@ namespace CommunicationProviders
 
 
 
-        public void SendAsync(string data, EventHandler<SocketAsyncEventArgs> handleResponse)
+        public bool SendAsync(string data, EventHandler<SocketAsyncEventArgs> handleResponse)
         {
             // We are re-using the _socket object initialized in the Connect method
             if (socket != null)
@@ -96,7 +105,7 @@ namespace CommunicationProviders
                 socketEventArg.SetBuffer(payload, 0, payload.Length);
 
                 // Make an asynchronous Send request over the socket
-                socket.SendAsync(socketEventArg);
+                return socket.SendAsync(socketEventArg);
             }
             else
             {

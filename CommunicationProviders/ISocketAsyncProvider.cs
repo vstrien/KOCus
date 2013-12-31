@@ -9,10 +9,10 @@ namespace CommunicationProviders
 {
     public interface ISocketAsyncProvider : ISocketProvider
     {
-        void ConnectAsync(EventHandler<SocketAsyncEventArgs> onCompletion);
+        bool ConnectAsync(EventHandler<SocketAsyncEventArgs> onCompletion);
 
-        void ReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse, bool ensureConnection = true);
+        bool ReceiveAsync(EventHandler<SocketAsyncEventArgs> handleResponse, bool ensureConnection = true);
 
-        void SendAsync(string data, EventHandler<SocketAsyncEventArgs> handleResponse);
+        bool SendAsync(string data, EventHandler<SocketAsyncEventArgs> handleResponse);
     }
 }
