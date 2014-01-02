@@ -25,10 +25,16 @@ namespace Koos__OBD_Communicator
     {
         public ConfigurationData configData;
         OBDDeviceCommunicatorAsync obd;
-        DateTime lastSeen = DateTime.MinValue;
-        short callNumber = 0;
-        const int availabilityRatio = 5;
-        const double timerIntervalSecs = 1;
+        //DateTime lastSeen = DateTime.MinValue;
+        //short callNumber = 0;
+//        const int availabilityRatio = 5;
+//        const double timerIntervalSecs = 1;
+//        const int timeoutForResetSecs = 
+//#if DEBUG
+//            6000;
+//#else
+//        10;
+//#endif
 
 #if DEBUG
         // benodigd voor unit tests
@@ -56,19 +62,11 @@ namespace Koos__OBD_Communicator
 configData = new ConfigurationData();
             obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IP, port), configData);
             
-            // Every (timerIntervalSecs) seconds, request new sensor values or re-initialize (if no response for 10 seconds)
-            DispatcherTimer requestNewPIDs = new DispatcherTimer();
-            requestNewPIDs.Interval = TimeSpan.FromSeconds(timerIntervalSecs);
-            requestNewPIDs.Tick += requestNewPIDs_Tick;
-            requestNewPIDs.Start();
-
             // starts response job
             // The response job runs asynchronously from the send jobs - it continually "drains the pipe" of messages from the OBD.
+            // Also, whenever the OBD is ready for new commands, it calls on the 'issue new command' method.
             this.obd.getAndHandleResponseJobAsync(); 
             
-            // Whenever a new response is returned, update the timer.
-            this.obd.RaisePIDResponse += obd_updateTimer;
-
             AddPIDSensorDisplay(this.configData.availableSensors());
         }
 
@@ -127,129 +125,6 @@ configData = new ConfigurationData();
                     };
                 }
             }
-        }
-
-        void requestNewPIDs_Tick(object sender, EventArgs e)
-        {
-            requestNewValues();
-        }
-
-        private void requestNewValues()
-        {
-            BackgroundWorker worker = new BackgroundWorker();
-
-            /**
-             * There are two main routines:
-             * - initializing (and giving instructions about how messages should be formed)
-             * - querying sensors
-             */
- 
-            
-            /**
-             * Querying is simple: just ask the OBD the current setting of all sensors that fulfill the following requirements:
-             * - we know how to handle them
-             * - the OBD has stated that the sensor is available
-             * Querying should only be done when the initialization process is finished.
-             * Whenever the OBD doesn't reply any message that makes sense within 10 seconds, the init process should be called again.
-             */
-            if(lastSeen.AddSeconds(10) >= DateTime.Now  // OBD has 'spoken' less then 10 seconds ago
-                && obd.isConnected                      // OBD is connected
-                                                        // Of the initialization steps, only the first two steps are necessary
-                                                        // The other steps, while useful (they minimize network traffic), don't block the querying process.
-                && obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed    
-                && (obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
-                // || obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Sent
-                ))
-            {
-                // Only one in every n calls (where 'n' is the availability ratio) needs to ask for sensor availability
-                callNumber++;
-                if (callNumber % availabilityRatio == 0)
-                {
-                    callNumber = 0;
-                    worker.DoWork += (s, eventArgs) =>
-                    {
-                        obd.checkSensorsAsync(true);
-                    };
-                }
-                else
-                {
-                    worker.DoWork += (s, eventArgs) =>
-                    {
-                        obd.checkSensorsAsync(false);
-                    };
-                }
-            }
-            
-            /**
-             * Initializing can be subdivided in four steps:
-             * 1. Reset all settings
-             * 2. Enable headers ('7E8')
-             * 3. Disable linefeeds ('\n')
-             * 4. Disable echo-messages (OBD confirming the arrival of messages by returning them)
-             * 
-             * Steps 2, 3 and 4 should not be executed before step 1 is finished.
-             */
-            if (lastSeen.AddSeconds(10) < DateTime.Now 
-                || obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
-            {
-                /* 1. Reset all settings */
-                Logger.WriteLine("(Re-)Initializing..");
-                lastSeen = DateTime.Now;
-                
-                // re-init (includes reset)
-                worker.DoWork += (s, eventArgs) =>
-                {
-                    obd.init_communication();
-                };
-            }
-            else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
-                && obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
-            {
-                /* 2. Enable headers */
-                lastSeen = DateTime.Now;
-                
-                // send 'set headers on'
-                worker.DoWork += (s, eventArgs) =>
-                {
-                    obd.sendHeaders(true);
-                };
-            }
-            else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
-                && obd.linefeedStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
-            {
-                /* 3. Disable linefeeds */
-                lastSeen = DateTime.Now;
-                
-                // send 'set linefeed off'
-                worker.DoWork += (s, eventArgs) =>
-                {
-                    obd.sendLinefeed(false);
-                };
-            }
-            else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
-                && obd.echoStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
-            {
-                /* 4. Disable echo-messages */
-                lastSeen = DateTime.Now;
-                
-                // send 'set echo off'
-                worker.DoWork += (s, eventArgs) =>
-                {
-                    obd.sendEcho(false);
-                };
-            }
-
-            //For future:
-            //worker.DoWork += (s, eventArgs) =>
-            //{
-            //    obd.getAndHandleResponse();
-            //};
-            worker.RunWorkerAsync();
-        }
-
-        private void obd_updateTimer(object sender, ResponseEventArgs e)
-        {
-            this.lastSeen = DateTime.Now;
         }
 
         private void sendLog(object sender, EventArgs e)

@@ -30,50 +30,55 @@ def send_hex(clientsocket, message):
 def send_string(clientsocket, message):
   send_hex(clientsocket, binascii.hexlify(message.encode('utf-8')))
 
-sock = ClientSocket(35000)
 while 1:
-  #accept connections
-  print("Waiting for new connection")
-  (sock, address) = sock.accept()
-  print("Connection open!")
-  #send_hex(sock, WELCOME)
-  #time.sleep(3)
-  #send_hex(sock, SEARCHING)
-  #time.sleep(3)
-  #send_hex(sock, UNABLE_TO_CONNECT)
+  try:
+    sock = ClientSocket(35000)
+    #accept connections
+    print("Waiting for new connection")
+    (sock, address) = sock.accept()
+    print("Connection open!")
+    send_hex(sock, WELCOME)
+    time.sleep(3)
+    send_hex(sock, SEARCHING)
+    #time.sleep(3)
+    #send_hex(sock, UNABLE_TO_CONNECT)
 
-  empty_array = bytearray(b" " * 1024)
-  buffer = bytearray(empty_array)
-  while buffer[:5] != bytearray(b'01 00'):
+    empty_array = bytearray(b" " * 1024)
     buffer = bytearray(empty_array)
-    sock.recv_into(buffer)
-    print(buffer[:5])
-    send_chunks(sock, buffer[:5].decode('utf-8'))
+    while buffer[:5] != bytearray(b'01 00'):
+      buffer = bytearray(empty_array)
+      sock.recv_into(buffer)
+      print(buffer[:5])
+      send_chunks(sock, buffer[:5].decode('utf-8'))
+      send_string(sock, ">")
 
-  # send_hex(sock, "374538203036203431203230204130203037204230203131200d")
-  #7E8 06 41 20 A0 07 B0 11 \r
-  
-  send_hex(sock, "374538203036203431203030204245203346204138203131200d0a0d0a3e")
-  #7E8 06 41 00 BE 3F A8 11 \r\n\r\n>
-  
-  while 1:
-    buffer = bytearray(empty_array)
-    sock.recv_into(buffer)
-    print(buffer[:5])
-    if(buffer[:5] == bytearray(b'01 04')):
-       send_string(sock, "7E8 03 41 04 4B")
-    elif(buffer[:5] == bytearray(b'01 05')):
-       send_string(sock, "7E8 03 41 05 4B")
-    elif(buffer[:5] == bytearray(b'01 06')):
-       send_string(sock, "7E8 03 41 06 4B")
-    elif(buffer[:5] == bytearray(b'01 0A')):
-       send_string(sock, "7E8 03 41 0A 4B")
-       
-  while 1:
-    #Start spamming
-    try:
-      send_chunks(sock, "7E8 03 41 04 FF\r")
-    except:
-      print("Connection closed")
-      break
-    time.sleep(1)
+    # send_hex(sock, "374538203036203431203230204130203037204230203131200d")
+    #7E8 06 41 20 A0 07 B0 11 \r
+    
+    send_hex(sock, "374538203036203431203030204245203346204138203131200d0a0d0a3e")
+    #7E8 06 41 00 BE 3F A8 11 \r\n\r\n>
+    
+    while 1:
+      buffer = bytearray(empty_array)
+      sock.recv_into(buffer)
+      print(buffer[:5])
+      if(buffer[:5] == bytearray(b'01 04')):
+         send_string(sock, "7E8 03 41 04 4B")
+      elif(buffer[:5] == bytearray(b'01 05')):
+         send_string(sock, "7E8 03 41 05 4B")
+      elif(buffer[:5] == bytearray(b'01 06')):
+         send_string(sock, "7E8 03 41 06 4B")
+      elif(buffer[:5] == bytearray(b'01 0A')):
+         send_string(sock, "7E8 03 41 0A 4B")
+      send_string(sock, ">")
+      
+    while 1:
+      #Start spamming
+      try:
+        send_chunks(sock, "7E8 03 41 04 FF\r")
+      except:
+        print("Connection closed")
+        break
+      time.sleep(1)
+  except:
+    print("Connection closed")

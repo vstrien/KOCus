@@ -134,10 +134,10 @@ namespace Koos__OBD_Communicator
                 // An unhandled exception has occurred; break into the debugger
                 System.Diagnostics.Debugger.Break();
             }
-            else
-            {
-                Logger.WriteLine(e.ExceptionObject);
-            }
+            //else
+            //{
+            //    Logger.WriteLine(e.ExceptionObject);
+            //}
         }
 
         #region Phone application initialization
