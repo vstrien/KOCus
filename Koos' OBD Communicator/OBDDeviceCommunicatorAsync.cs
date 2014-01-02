@@ -114,16 +114,18 @@ namespace Koos__OBD_Communicator
         /// For all available sensors (all sensors that we can handle, and are indicated by the car as 'available'):
         /// Send out a request for new values
         /// </summary>
-        public void checkSensorsAsync()
+        public void checkSensorsAsync(bool checkAvailabilityPIDs = true)
         {    
             var availableSensors = this.configuration.availableSensors();
             Logger.WriteLine("Requesting available sensors");
 
             foreach (PIDSensor SensorsToCheck in availableSensors)
             {
-                string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + '\r';
-                Logger.WriteLine("Sending " + message);
-                this.socket.SendAsync(message, null);
+                if (checkAvailabilityPIDs || SensorsToCheck.firstPID == 0)
+                {
+                    string message = SensorsToCheck.mode.ToString("D2") + " " + SensorsToCheck.PID.ToString("D2") + '\r';
+                    this.socket.SendAsync(message, null);
+                }
             }
         }
 
@@ -160,8 +162,7 @@ namespace Koos__OBD_Communicator
             string[] responseList = responses.Replace('\n'.ToString(), "").Split('\r');
             foreach (string response in responseList)
             {
-                Logger.WriteLine("New response");
-                Logger.WriteLine(response);
+                Logger.WriteLine("R: " + response);
                 if (this.resetStatus == MessageState.Sent
                         && responses.Length >= 4
                         && responses.Substring(0, 4) == "AT Z")
@@ -180,11 +181,15 @@ namespace Koos__OBD_Communicator
                 {
                     this.linefeedStatus = MessageState.Confirmed;
                 }
+                else if (this.linefeedStatus == MessageState.Sent
+                    && responses.Length >= 5
+                    && responses.Substring(0, 4) == "AT E")
+                {
+                    this.echoStatus = MessageState.Confirmed;
+                }
                 else if (Message.isValid(response) == Message.ResponseValidity.Valid)
                 {
                     this.OnRaisePIDResponse(new ResponseEventArgs(response));
-                    Logger.WriteLine("Valid");
-
                     this.configuration.parseOBDResponse(response);
                 }
                 else
@@ -195,7 +200,7 @@ namespace Koos__OBD_Communicator
                             Logger.WriteLine("Invalid contents");
                             break;
                         case Message.ResponseValidity.InvalidHeader:
-                            Logger.WriteLine("Invalid header");
+                            // No logging - just a message we can't handle.
                             break;
                         case Message.ResponseValidity.InvalidSize:
                             Logger.WriteLine("Invalid size");

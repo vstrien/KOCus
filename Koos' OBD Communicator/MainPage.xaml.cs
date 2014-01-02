@@ -26,6 +26,9 @@ namespace Koos__OBD_Communicator
         public ConfigurationData configData;
         OBDDeviceCommunicatorAsync obd;
         DateTime lastSeen = DateTime.MinValue;
+        short callNumber = 0;
+        const int availabilityRatio = 5;
+        const double timerIntervalSecs = 1;
 
 #if DEBUG
         // benodigd voor unit tests
@@ -34,35 +37,36 @@ namespace Koos__OBD_Communicator
 
         // Constructor - voor lokaal testen met een Python-backend: eigen IP-adres gebruiken (opvragen!)
         // Voor gebruik in de auto: zet op 'Release'.
-#if DEBUG
         public MainPage()
-            : this(IPAddress.Parse("192.168.1.46"), Int32.Parse("35000"))
+            : this(IPAddress.Parse(
+#if DEBUG
+            "192.168.1.46"
+#else
+            "192.168.0.10"
+#endif
+            ), Int32.Parse("35000"))
         {
             
         } 
-#else
-        public MainPage()
-            : this(IPAddress.Parse("192.168.0.10"), Int32.Parse("35000"))
-        {
 
-        }
-#endif
         public MainPage(IPAddress IP, int port)
         {
-            InitializeComponent();
-            configData = new ConfigurationData();
+            InitializeComponent(); // Default WP init
+            
+configData = new ConfigurationData();
             obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IP, port), configData);
-            //obd = new OBDDeviceCommunicatorAsync(new CommunicationProviders.SocketAsync(IPAddress.Parse("192.168.40.138"), Int32.Parse("35000")), configData);
-
-            // Every second, request new sensor values or re-initialize (if no response for 10 seconds)
+            
+            // Every (timerIntervalSecs) seconds, request new sensor values or re-initialize (if no response for 10 seconds)
             DispatcherTimer requestNewPIDs = new DispatcherTimer();
-            requestNewPIDs.Interval = TimeSpan.FromSeconds(1);
+            requestNewPIDs.Interval = TimeSpan.FromSeconds(timerIntervalSecs);
             requestNewPIDs.Tick += requestNewPIDs_Tick;
             requestNewPIDs.Start();
 
-            this.obd.getAndHandleResponseJobAsync(); // starts response job
-
-            // subscribe to events
+            // starts response job
+            // The response job runs asynchronously from the send jobs - it continually "drains the pipe" of messages from the OBD.
+            this.obd.getAndHandleResponseJobAsync(); 
+            
+            // Whenever a new response is returned, update the timer.
             this.obd.RaisePIDResponse += obd_updateTimer;
 
             AddPIDSensorDisplay(this.configData.availableSensors());
@@ -74,15 +78,16 @@ namespace Koos__OBD_Communicator
             {
                 if (sensor.PIDSensors.Count > 0)
                 {
+                    // Add 'child' sensors instead of current sensor
                     this.AddPIDSensorDisplay(sensor.PIDSensors);
                 }
-                else
+                // Only formula sensors can be read currently, so all other ones can be ignored.
+                else if (sensor.highestFormulaCharacterNumber > -1) 
                 {
-                    
                     TextBlock sensorDescription = new TextBlock()
                     {
                         //Name = "PIDDesc " + sensor.PID.ToString(),
-                        FontSize = 30,
+                        FontSize = 20,
                         Text = sensor.description
                     };
 
@@ -104,16 +109,19 @@ namespace Koos__OBD_Communicator
                     ListBoxItem sensorItem = new ListBoxItem()
                     {
                         //Name = "sensor " + sensor.PID.ToString();
-                        Content = sensorStack
+                        Content = sensorStack,
+                        Visibility = System.Windows.Visibility.Collapsed
                     };
                     // this.DisplayItems[sensor.PID] = sensorItem;
                     
                     ControlsDisplay.Items.Add(sensorItem);
                     
+                    // Whenever sensor finds new data, insert into this textbox:
                     sensor.RaiseOBDSensorData += (object sender, OBDSensorDataEventArgs s) =>
                     {
                         this.Dispatcher.BeginInvoke(delegate()
                         {
+                            sensorItem.Visibility = System.Windows.Visibility.Visible;
                             sensorValue.Text = s.value;
                         });
                     };
@@ -134,7 +142,45 @@ namespace Koos__OBD_Communicator
              * There are two main routines:
              * - initializing (and giving instructions about how messages should be formed)
              * - querying sensors
-             * 
+             */
+ 
+            
+            /**
+             * Querying is simple: just ask the OBD the current setting of all sensors that fulfill the following requirements:
+             * - we know how to handle them
+             * - the OBD has stated that the sensor is available
+             * Querying should only be done when the initialization process is finished.
+             * Whenever the OBD doesn't reply any message that makes sense within 10 seconds, the init process should be called again.
+             */
+            if(lastSeen.AddSeconds(10) >= DateTime.Now  // OBD has 'spoken' less then 10 seconds ago
+                && obd.isConnected                      // OBD is connected
+                                                        // Of the initialization steps, only the first two steps are necessary
+                                                        // The other steps, while useful (they minimize network traffic), don't block the querying process.
+                && obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed    
+                && (obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
+                // || obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Sent
+                ))
+            {
+                // Only one in every n calls (where 'n' is the availability ratio) needs to ask for sensor availability
+                callNumber++;
+                if (callNumber % availabilityRatio == 0)
+                {
+                    callNumber = 0;
+                    worker.DoWork += (s, eventArgs) =>
+                    {
+                        obd.checkSensorsAsync(true);
+                    };
+                }
+                else
+                {
+                    worker.DoWork += (s, eventArgs) =>
+                    {
+                        obd.checkSensorsAsync(false);
+                    };
+                }
+            }
+            
+            /**
              * Initializing can be subdivided in four steps:
              * 1. Reset all settings
              * 2. Enable headers ('7E8')
@@ -142,37 +188,12 @@ namespace Koos__OBD_Communicator
              * 4. Disable echo-messages (OBD confirming the arrival of messages by returning them)
              * 
              * Steps 2, 3 and 4 should not be executed before step 1 is finished.
-             * 
-             * Querying is simple: just ask the OBD the current setting of all sensors that fulfill the following requirements:
-             * - we know how to handle them
-             * - the OBD has stated that the sensor is available
-             * Querying should only be done when the initialization process is finished.
-             * Whenever the OBD doesn't reply any message that makes sense within 10 seconds, the init process should be called again.
              */
-
-            if(lastSeen.AddSeconds(10) >= DateTime.Now  // OBD has 'spoken' less then 10 seconds ago
-                && obd.isConnected                      // OBD is connected
-                                                        // Initializing steps are all four executed:
-                && obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed    
-                && obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
-                && obd.linefeedStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
-                && obd.echoStatus == OBDDeviceCommunicatorAsync.MessageState.Sent)
-            {
-                // Query
-                Logger.WriteLine("Requesting new sensors..");
-
-                worker.DoWork += (s, eventArgs) =>
-                {
-                    obd.checkSensorsAsync();
-                };
-            }
-            else if (lastSeen.AddSeconds(10) < DateTime.Now 
+            if (lastSeen.AddSeconds(10) < DateTime.Now 
                 || obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
             {
-                // 10 seconds without response, or the init hasn't been sent yet. 
+                /* 1. Reset all settings */
                 Logger.WriteLine("(Re-)Initializing..");
-                
-                // reset last seen date
                 lastSeen = DateTime.Now;
                 
                 // re-init (includes reset)
@@ -184,7 +205,7 @@ namespace Koos__OBD_Communicator
             else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
                 && obd.headerStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
             {
-                // reset last seen date
+                /* 2. Enable headers */
                 lastSeen = DateTime.Now;
                 
                 // send 'set headers on'
@@ -196,7 +217,7 @@ namespace Koos__OBD_Communicator
             else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
                 && obd.linefeedStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
             {
-                // reset last seen date
+                /* 3. Disable linefeeds */
                 lastSeen = DateTime.Now;
                 
                 // send 'set linefeed off'
@@ -208,7 +229,7 @@ namespace Koos__OBD_Communicator
             else if (obd.resetStatus == OBDDeviceCommunicatorAsync.MessageState.Confirmed
                 && obd.echoStatus == OBDDeviceCommunicatorAsync.MessageState.Unsent)
             {
-                // reset last seen date
+                /* 4. Disable echo-messages */
                 lastSeen = DateTime.Now;
                 
                 // send 'set echo off'
@@ -224,13 +245,6 @@ namespace Koos__OBD_Communicator
             //    obd.getAndHandleResponse();
             //};
             worker.RunWorkerAsync();
-        }
-
-        void PIDRequestButton_Tap(object s, System.Windows.Input.GestureEventArgs e)
-        {
-            Logger.WriteLine("Requesting PIDs");
-
-            this.obd.getAndHandleResponseJobAsync();
         }
 
         private void obd_updateTimer(object sender, ResponseEventArgs e)

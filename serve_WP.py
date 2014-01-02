@@ -27,7 +27,8 @@ def send_chunks(clientsocket, message):
 def send_hex(clientsocket, message):
   send_chunks(clientsocket, binascii.unhexlify(message).decode())
 
-
+def send_string(clientsocket, message):
+  send_hex(clientsocket, binascii.hexlify(message.encode('utf-8')))
 
 sock = ClientSocket(35000)
 while 1:
@@ -56,10 +57,18 @@ while 1:
   #7E8 06 41 00 BE 3F A8 11 \r\n\r\n>
   
   while 1:
-    sock.recv_into(buffer)
-    print(buffer)
     buffer = bytearray(empty_array)
-
+    sock.recv_into(buffer)
+    print(buffer[:5])
+    if(buffer[:5] == bytearray(b'01 04')):
+       send_string(sock, "7E8 03 41 04 4B")
+    elif(buffer[:5] == bytearray(b'01 05')):
+       send_string(sock, "7E8 03 41 05 4B")
+    elif(buffer[:5] == bytearray(b'01 06')):
+       send_string(sock, "7E8 03 41 06 4B")
+    elif(buffer[:5] == bytearray(b'01 0A')):
+       send_string(sock, "7E8 03 41 0A 4B")
+       
   while 1:
     #Start spamming
     try:

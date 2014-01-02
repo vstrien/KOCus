@@ -103,20 +103,12 @@ namespace Koos__OBD_Communicator
         /// <param name="response">the uncleaned, unfiltered response from the car</param>
         public void parseResponse(string response)
         {
-            Logger.WriteLine("Parsing response");
-
             string cleanedResponse = Message.cleanReponse(response);
-            Logger.WriteLine("Cleaned response: " + cleanedResponse);
 
             // get PID from message
             int msgPID = Message.getPIDOfMessage(cleanedResponse);
             int mode = Message.getModeOfMessage(cleanedResponse);
             string OBDMessageContents = Message.getMessageContents(response);
-
-            Logger.WriteLine("PID: " + msgPID.ToString());
-            Logger.WriteLine("mode: " + mode.ToString());
-            Logger.WriteLine("Contents: " + OBDMessageContents);
-
 
             this.parseResponse(msgPID, mode, OBDMessageContents);
         }
@@ -128,24 +120,18 @@ namespace Koos__OBD_Communicator
         /// <param name="OBDMessageContents">The message, as returned by the Message helper class</param>
         private void parseResponse(int msgPID, int msgMode, string OBDMessageContents)
         {
-            Logger.WriteLine("Looking up mode " + msgMode.ToString() + " sensor " + msgPID.ToString() + " inside database...");
-
             if (this.mode == msgMode && msgPID == this.PID)
             {
-                Logger.WriteLine("Sensor found for mode " + msgMode.ToString() + " PID " + msgPID.ToString());
-
                 // The message is meant for the current PID. 
 
                 // Check the type of PID this is:
                 if (this.PIDSensors.Count > 0)
                 { 
                     // availability PID
-                    Logger.WriteLine("Availability PID found");
                     updateAvailability(OBDMessageContents);
                 }
                 else if (this.highestFormulaCharacterNumber > -1) // formula PID
                 {
-                    Logger.WriteLine("Formula PID found: " + this.formula);
 
                     string parsedFormula = parseFormula(OBDMessageContents).ToString();
                     Logger.WriteLine("Formula: " + parsedFormula);
@@ -159,15 +145,11 @@ namespace Koos__OBD_Communicator
                 }
                 else
                 {
-                    Logger.WriteLine("Bit-encoded sensor - skipping parse action");
                     // Nothing yet. Bit-encoded sensor is available, but we don't have the means to parse it (yet).
                 } 
             }
             else
             {
-                Logger.WriteLine("At mode " + this.mode.ToString() + " PID " + this.PID.ToString());
-                Logger.WriteLine("Looking at children...");
-
                 foreach (var child in this.PIDSensors)
                 {
                     // Would be better to tighten the scope here, only addressing possible targets.

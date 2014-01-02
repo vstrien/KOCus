@@ -20,7 +20,6 @@
       <PIDSensor PID="11" bytes="01" Description="Throttle position (%)" Formula="A*100/255" />
       <PIDSensor PID="12" bytes="01" Description="Commanded secondary air status" />
       <PIDSensor PID="13" bytes="01" Description="Oxygen sensors present" />
-
       <!--
       Sensors met dubbele waarden: moet nog datastructuur voor bedacht worden.
       <PIDSensor PID="14" bytes="02" Description="Vehicle speed (km/h)" Formula="A" />
@@ -36,15 +35,56 @@ Short term fuel trim (V, %)" Formula="A" />-->
       <PIDSensor PID="1C" bytes="01" Description="OBD standards this vehicle conforms to" />
       <PIDSensor PID="1D" bytes="01" Description="Oxygen sensors present" />
       <PIDSensor PID="1E" bytes="01" Description="Auxiliary input status" />
-      <PIDSensor PID="1F" bytes="02" Description="Run time since engine start (sec.)" Formula="A" />
+      <PIDSensor PID="1F" bytes="02" Description="Run time since engine start (sec.)" Formula="(A*256)+B" />
       <PIDSensor PID="20" bytes="04" firstPID="21" Description="PIDs supported [21 - 40]">
+        <PIDSensor PID="21" bytes="02" Description="Traveled with MIL on (km)" Formula="(A*256)+B" />
+        <PIDSensor PID="22" bytes="02" Description="Fuel Rail Pressure (kPa)" Formula="((A*256)+B)*0.079" />
+        <PIDSensor PID="23" bytes="02" Description="Fuel Rail Pressure (kPa)" Formula="((A*256)+B)*10" />
+        <!-- 24 t/m 2B: dubbele waarden -->
+        <PIDSensor PID="2C" bytes="01" Description="Commanded EGR (Exhaust gas recirc.)" Formula="A*100/255" />
+        <PIDSensor PID="2D" bytes="01" Description="EGR Error (%)" Formula="(A-128)*100/128" />
+        <PIDSensor PID="2E" bytes="01" Description="Commanded evaporative purge" Formula="A*100/255" />
         <PIDSensor PID="2F" bytes="04" Description="Fuel level input" Formula="A*100/255" />
+        <PIDSensor PID="30" bytes="01" Description="# warm-ups since codes cleared" Formula="A" />
+        <PIDSensor PID="31" bytes="02" Description="Km traveled since codes cleared" Formula="(A*256)+B" />
+        <PIDSensor PID="32" bytes="02" Description="Evap. System Vaport Pressure (Pa)" Formula="((A*256)+B)/4" />
         <PIDSensor PID="33" bytes="01" Description="Barometric pressure" Formula="A" />
+        <!-- 34 t/m 3B: dubbele waarden -->
+        <PIDSensor PID="3C" bytes="02" Description="Catalyst Temp. Bank 1 Sensor 1 (C)" Formula="((A*256)+B)/10-40" />
+        <PIDSensor PID="3D" bytes="02" Description="Catalyst Temp. Bank 2 Sensor 1 (C)" Formula="((A*256)+B)/10-40" />
+        <PIDSensor PID="3E" bytes="02" Description="Catalyst Temp. Bank 1 Sensor 2 (C)" Formula="((A*256)+B)/10-40" />
+        <PIDSensor PID="3F" bytes="02" Description="Catalyst Temp. Bank 2 Sensor 2 (C)" Formula="((A*256)+B)/10-40" />
         <PIDSensor PID="40" bytes="04" firstPID="41" Description="PIDs supported [41 - 60]">
+          <PIDSensor PID="41" bytes="04" Description="Monitor status this drive cycle" />
+          <PIDSensor PID="42" bytes="02" Description="Control module voltage (V)" Formula="((A*256)+B)/1000" />
+          <PIDSensor PID="43" bytes="02" Description="Absolute load value" Formula="((A*256)+B)*100/255" />
+          <PIDSensor PID="44" bytes="02" Description="Command equiv. ratio" Formula="((A*256)+B)/32768" />
+          <PIDSensor PID="45" bytes="01" Description="Relative throttle position (%)" Formula="A*100/255" />
           <PIDSensor PID="46" bytes="01" Description="Ambient Air temperature" Formula="A-40" />
-          <PIDSensor PID="5C" bytes="01" Description="Engine Oil temperature" Formula="A-40" />
+          <PIDSensor PID="47" bytes="01" Description="Absolute throttle position B (%)" Formula="A*100/255" />
+          <PIDSensor PID="48" bytes="01" Description="Absolute throttle position C (%)" Formula="A*100/255" />
+          <PIDSensor PID="49" bytes="01" Description="Accel. pedal position D (%)" Formula="A*100/255" />
+          <PIDSensor PID="4A" bytes="01" Description="Accel. pedal position E (%)" Formula="A*100/255" />
+          <PIDSensor PID="4B" bytes="01" Description="Accel. pedal position F (%)" Formula="A*100/255" />
+          <PIDSensor PID="4C" bytes="01" Description="Commanded throttle actuator (%)" Formula="A*100/255" />
+          <PIDSensor PID="4D" bytes="02" Description="Time run with MIL on (min.)" Formula="(A*256)+B" />
+          <PIDSensor PID="4E" bytes="02" Description="Time since trouble codes cleared (min.)" Formula="(A*256)+B" />
+          <!-- 4F t/m 50: meerdere waarden -->
+          <PIDSensor PID="52" bytes="01" Description="Ethanol fuel (%)" Formula="A*100/255" />
+          <PIDSensor PID="53" bytes="02" Description="Absolute Evap system Vapor Pressure (kPa)" Formula="((A*256)+B)/200" />
+          <PIDSensor PID="54" bytes="02" Description="Evap system Vapor Pressure (Pa)" Formula="((A*256)+B)-32767" />
+          <!-- 55 t/m 58: meerdere waarden-->
+          <PIDSensor PID="59" bytes="02" Description="Fuel rail pressure (kPa)" Formula="((A*256)+B)*10" />
+          <PIDSensor PID="5A" bytes="01" Description="Relative accelerator pedal position (%)" Formula="A*100/255" />
+          <PIDSensor PID="5B" bytes="01" Description="Hybrid battery pack remaining life (%)" Formula="A*100/255" />
+          <PIDSensor PID="5C" bytes="01" Description="Engine oil temperature (C)" Formula="A-40" />
+          <PIDSensor PID="5D" bytes="02" Description="Fuel injection timing (°)" Formula="(((A*256)+B)-26880)/128	" />
+          <PIDSensor PID="5E" bytes="02" Description="Engine fuel rate (L/h)" Formula="((A*256)+B)*0.05" />
           <PIDSensor PID="60" bytes="04" firstPID="61" Description="PIDs supported [61 - 80]">
-            <PIDSensor PID="61" bytes="01" Description="Driver's demand engine - percent torque" Formula="A-125" />
+            <PIDSensor PID="61" bytes="01" Description="Driver's demand engine - percent torque	(%)" Formula="A-125" />
+            <PIDSensor PID="62" bytes="01" Description="Actual engine - percent torque	(%)" Formula="A-125" />
+            <PIDSensor PID="63" bytes="02" Description="Engine reference torque	(Nm)" Formula="A*256+B" />
+
           </PIDSensor>
         </PIDSensor>
       </PIDSensor>
