@@ -112,9 +112,10 @@ namespace Koos__OBD_Communicator_Test
             int lastPID = 0x40;
             int mode = 1;
             int base_pid = 0x20;
-            
+            //                               7E8064100BE 3F A8 11 
             string returnMessage_cleansed = "7E8064120A007B011";
-
+            // A0 07 B0 11 = 1010 0000 0000 0111 1011 0000 0001 0001
+            
             string PID00 = "    <PIDSensor PID=\"" + base_pid.ToString("X") + "\" bytes=\"04\" firstPID=\"" + firstPID.ToString("X") + "\" Description=\"PIDs supported [01 - 20]\">\r\n";
             for (int nPID = firstPID; nPID <= lastPID; nPID++)
             {

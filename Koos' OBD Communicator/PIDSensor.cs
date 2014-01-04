@@ -226,7 +226,7 @@ namespace Koos__OBD_Communicator
                 }
                 else if (result.Count() == 1)
                 {
-                    Logger.WriteLine("Setting PID " + currentPID_absolute + "(0x" + currentPID_absolute.ToString("x") + " available");
+                    Logger.WriteLine("Setting PID " + currentPID_absolute + "(0x" + currentPID_absolute.ToString("x") + " unavailable");
                     
                     result.First().isAvailable = false;
                 }

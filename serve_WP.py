@@ -57,11 +57,13 @@ while 1:
     
     send_hex(sock, "374538203036203431203030204245203346204138203131200d0a0d0a3e")
     #7E8 06 41 00 BE 3F A8 11 \r\n\r\n>
-    
+
     while 1:
       buffer = bytearray(empty_array)
       sock.recv_into(buffer)
-      print(buffer[:5])
+      if(buffer[:5] == bytearray(b'01 32')):
+         print("Hit!")
+         print(buffer[:5])
       if(buffer[:5] == bytearray(b'01 04')):
          send_string(sock, "7E8 03 41 04 4B")
       elif(buffer[:5] == bytearray(b'01 05')):

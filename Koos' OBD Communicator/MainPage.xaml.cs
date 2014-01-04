@@ -82,6 +82,7 @@ configData = new ConfigurationData();
                 // Only formula sensors can be read currently, so all other ones can be ignored.
                 else if (sensor.highestFormulaCharacterNumber > -1) 
                 {
+
                     TextBlock sensorDescription = new TextBlock()
                     {
                         //Name = "PIDDesc " + sensor.PID.ToString(),
@@ -91,7 +92,6 @@ configData = new ConfigurationData();
 
                     TextBlock sensorValue = new TextBlock()
                     {
-                        Name = "PIDValue " + sensor.PID.ToString(),
                         Text = ""
                     };
 #if DEBUG
