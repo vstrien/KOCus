@@ -8,12 +8,11 @@ namespace Koos__OBD_Communicator.SensorControls
 {
     class BasicSensorControl : SensorControl
     {
-        TextBlock sensorDescription;
-        TextBlock sensorValue;
-
-        StackPanel sensorStack;
+        private TextBlock sensorDescription;
+        private TextBlock sensorValue;
+        private StackPanel sensorStack;
         private ListBoxItem sensorItem;
-        
+
         public BasicSensorControl(string description)
         {
             sensorDescription = new TextBlock() { FontSize = 20, Text = description };
@@ -39,6 +38,11 @@ namespace Koos__OBD_Communicator.SensorControls
         public ListBoxItem getSensorItem()
         {
             return this.sensorItem;
+        }
+
+        public void setVisibility(bool visible)
+        {
+            this.sensorItem.Visibility = visible ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         }
     }
 }

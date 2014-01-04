@@ -7,7 +7,7 @@ namespace Koos__OBD_Communicator
 {
     public class OBDSensorDataEventArgs : EventArgs
     {
-        public OBDSensorDataEventArgs(int mode, int PIDCode, int length, string message, string value)
+        public OBDSensorDataEventArgs(int mode, int PIDCode, int length, string message, double value)
         {
             this.mode = mode;
             this.PIDCode = PIDCode;
@@ -20,6 +20,6 @@ namespace Koos__OBD_Communicator
         public int PIDCode { get; private set; }
         public int length { get; private set; }
         public string message { get; private set; }
-        public string value { get; private set; }
+        public double value { get; private set; }
     }
 }

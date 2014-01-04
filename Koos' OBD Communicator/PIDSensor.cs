@@ -133,8 +133,7 @@ namespace Koos__OBD_Communicator
                 else if (this.highestFormulaCharacterNumber > -1) // formula PID
                 {
 
-                    string parsedFormula = parseFormula(OBDMessageContents).ToString();
-                    Logger.WriteLine("Formula: " + parsedFormula);
+                    double parsedFormula = parseFormula(OBDMessageContents);
                     this.OnRaiseOBDSensorData(new OBDSensorDataEventArgs(
                             this.mode,
                             PID,

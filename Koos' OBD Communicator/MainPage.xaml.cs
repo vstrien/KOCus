@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Windows.Threading;
 using Logger = CaledosLab.Portable.Logging.Logger;
 using Microsoft.Phone.Tasks;
+using Koos__OBD_Communicator.SensorControls;
 
 namespace Koos__OBD_Communicator
 {
@@ -82,35 +83,9 @@ configData = new ConfigurationData();
                 // Only formula sensors can be read currently, so all other ones can be ignored.
                 else if (sensor.highestFormulaCharacterNumber > -1) 
                 {
+                    SensorControl sensorControl = new BasicSensorControl(sensor.description);
 
-                    TextBlock sensorDescription = new TextBlock()
-                    {
-                        //Name = "PIDDesc " + sensor.PID.ToString(),
-                        FontSize = 20,
-                        Text = sensor.description
-                    };
-
-                    TextBlock sensorValue = new TextBlock()
-                    {
-                        Text = ""
-                    };
-#if DEBUG
-                    this.DisplayValues[sensor.PID] = sensorValue;
-#endif           
-                    StackPanel sensorStack = new StackPanel()
-                    {
-                        Orientation = System.Windows.Controls.Orientation.Vertical
-                    };
-                    sensorStack.Children.Add(sensorDescription);
-                    sensorStack.Children.Add(sensorValue);
-
-                    ListBoxItem sensorItem = new ListBoxItem()
-                    {
-                        //Name = "sensor " + sensor.PID.ToString();
-                        Content = sensorStack,
-                        Visibility = System.Windows.Visibility.Collapsed
-                    };
-                    // this.DisplayItems[sensor.PID] = sensorItem;
+                    ListBoxItem sensorItem = sensorControl.getSensorItem();
                     
                     ControlsDisplay.Items.Add(sensorItem);
                     
@@ -119,8 +94,8 @@ configData = new ConfigurationData();
                     {
                         this.Dispatcher.BeginInvoke(delegate()
                         {
-                            sensorItem.Visibility = System.Windows.Visibility.Visible;
-                            sensorValue.Text = s.value;
+                            sensorControl.setVisibility(true);
+                            sensorControl.setSensorValue(s.value);
                         });
                     };
                 }
